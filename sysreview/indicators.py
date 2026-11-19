@@ -114,6 +114,55 @@ SOURCE_LABEL = {"Dependent variable": "Dependent Variables",
                 "Control variable": "Control Variables"}
 
 
+STAT_PAREN = re.compile(r"\s*\((?:[^()]*?(?:\bM ?=|\bM \d|\bSD\b|median|\d+(?:\.\d+)?%|1 = |0 = |\d to \d|yes ?/ ?no|metric|\d-point|likert|ref\.?)[^()]*)\)", re.I)
+STAT_SEGMENT = re.compile(
+    r"^\s*(?:M ?=|M \d|SD\b|median|\d|0/1|1 = |1 to \d|yes\b|no\b|dummy|binary|metric|ordinal|continuous|"
+    r"\d+-point|same scale|increase|decrease|<|>|≥|≤|ref\.?|\(|n ?=)", re.I)
+
+
+def _after_colon(text: str) -> str:
+    depth = 0
+    for k, ch in enumerate(text):
+        if ch == "(":
+            depth += 1
+        elif ch == ")":
+            depth -= 1
+        elif ch == ":" and depth == 0:
+            return text[k + 1:].strip()
+    return ""
+
+
+def _split_top_level(text: str, sep: str = ";") -> list[str]:
+    parts, depth, cur = [], 0, ""
+    for ch in text:
+        depth += (ch == "(") - (ch == ")")
+        if ch == sep and depth == 0:
+            parts.append(cur)
+            cur = ""
+        else:
+            cur += ch
+    return parts + [cur]
+
+
+def definition(text: str) -> str:
+    """The descriptive part of a variable's text, without scales and statistics.
+    Blank when the extraction gives no definition (only a name, scale or stats)."""
+    after = _after_colon(str(text))
+    if not after:
+        return ""
+    keep = []
+    for seg in _split_top_level(after):
+        seg = STAT_PAREN.sub("", seg).strip(" ,.")
+        seg = re.sub(r",\s*(?:0/1|1 = yes|yes ?/ ?no)\b.*$", "", seg).strip(" ,.")
+        if not seg or STAT_SEGMENT.match(seg) or re.search(r"\bvs\b", seg):
+            continue
+        if len(re.findall(r"[A-Za-z]{3,}", seg)) < 2:
+            continue
+        keep.append(seg)
+    out = "; ".join(keep)
+    return out[0].upper() + out[1:] if out else ""
+
+
 def analysis_profile(models_text) -> dict:
     fams = set(model_families(models_text))
     # Also scan placeholder text such as "N/A (descriptive; ... correlations only)"
@@ -183,10 +232,11 @@ def indicator_table(values: pd.DataFrame, apply_overrides: bool = True) -> pd.Da
                 role, basis = auto_role(source, r["_context"], r["Text"], prof)
                 rows.append({"ID": pid, "Source column": SOURCE_LABEL[source], "Role": role,
                              "Role basis": basis, "Dimension": r["Dimension"],
-                             "Indicator": r["Indicator"], "Measure type": r["Measure type"],
+                             "Indicator": r["Indicator"], "Definition": definition(r["Text"]),
+                             "Measure type": r["Measure type"],
                              "Text": r["Text"]})
     df = pd.DataFrame(rows, columns=["ID", "Source column", "Role", "Role basis", "Dimension",
-                                     "Indicator", "Measure type", "Text"])
+                                     "Indicator", "Definition", "Measure type", "Text"])
     if apply_overrides:
         ov = read_role_overrides()
         if len(ov):

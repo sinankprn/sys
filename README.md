@@ -22,7 +22,7 @@ python scripts/run_all.py
 
 | Script | Answers | Main outputs |
 |---|---|---|
-| `00_organise_extraction.py` | A cleaner copy of the extraction | `output/organised_extraction.xlsx` (Overview, one tab per section, quantitative Indicators, qualitative Themes, Verification) |
+| `00_organise_extraction.py` | A cleaner copy of the extraction | `output/organised_extraction.xlsx` (Overview, Indicators (quantitative), Themes (qualitative)) and `output/extraction_by_section.xlsx` (one tab per section, Verification) |
 | `01_publication.py` | Publications by year, authors, countries, sport, journal | `output/tables/01_publication.xlsx`, `output/figures/01_*.png` |
 | `02_study_design.py` | Quantitative vs qualitative vs mixed, longitudinal vs cross-sectional, sample sizes, respondents, data collection | `02_study_design.xlsx`, `02_*.png` |
 | `03_capacity.py` | Which dimensions received attention, how they were measured, what was looked at (quantitative indicators only), capacity as outcome vs predictor, critical elements | `03_capacity.xlsx`, `03_*.png` |
@@ -35,8 +35,11 @@ python scripts/run_all.py
 
 ### Variable roles
 
-In the Indicators sheet, **Source column** is where a variable sits in the extraction
-(Dependent / Independent / Control Variables). **Role** is what it does in the analysis.
+In the Indicators sheet, **Role** is what a variable does in the analysis, and
+**Definition** is the descriptive part of its extracted text with scales and statistics
+removed. Definition is left blank where the extraction gives none. The review workbook
+also shows **Source column**, which is where the variable sits in the extraction
+(Dependent / Independent / Control Variables).
 Not every analysis has an outcome, so the role is fitted to the paper's methods:
 
 | Paper's analysis | Roles used |
@@ -48,7 +51,7 @@ Not every analysis has an outcome, so the role is fitted to the paper's methods:
 | Descriptive only | Measured only |
 | Any | Matching variable, Unclear |
 
-Roles are suggested automatically, and **Role basis** shows how each was decided. Bases
+Roles are suggested automatically, and **Role basis** (in the review workbook) shows how each was decided. Bases
 ending in "check" are weak guesses, for example papers that run both regressions and
 ANOVAs. Confirm or change them in the **Variable roles** tab of the review workbook.
 `07_apply_review.py` logs your decisions to `data/corrections/indicator_roles.csv`,

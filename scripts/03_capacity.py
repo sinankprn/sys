@@ -59,7 +59,7 @@ def main():
     other_groups = ind[~ind["Is capacity dimension"] & (ind["Dimension"] != "Not grouped")]
     other_constructs = other_groups.groupby("Dimension")["ID"].agg(
         Indicators="count", IDs=lambda s: ", ".join(map(str, sorted(set(s))))).sort_values("Indicators", ascending=False)
-    indicator_list = cap[["ID", "Reference", "Approach", "Source column", "Role", "Role basis", "Dimension", "Indicator", "Measure type", "Text"]]
+    indicator_list = cap[["ID", "Reference", "Approach", "Source column", "Role", "Role basis", "Dimension", "Indicator", "Definition", "Measure type", "Text"]]
 
     # 3. Critical elements
     ce = critical_element_matrix(v)
