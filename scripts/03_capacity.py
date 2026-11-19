@@ -38,23 +38,28 @@ def main():
     #    qualitative themes are in 03b_qualitative_themes.py)
     cap = ind[ind["Is capacity dimension"]]
     quant = cap
-    indicators_per_dim = pd.crosstab(cap["Dimension"], cap["Role"])
+    indicators_per_dim = pd.crosstab(cap["Dimension"], cap["Source column"])
     measure_by_dim = pd.crosstab(quant["Dimension"], quant["Measure type"])
     measure_overall = quant["Measure type"].value_counts().to_frame("Indicators")
     papers_per_measure = (quant.groupby("Measure type")["ID"].nunique().rename("Papers").to_frame())
     role_by_dim = (cap.groupby(["Dimension", "Role"])["ID"].nunique().unstack(fill_value=0))
-    role_by_dim.columns = [f"Papers with {r.lower()}s" for r in role_by_dim.columns]
-    # Capacity as outcome vs predictor
-    as_dv = ind[ind["Role"] == "Dependent variable"].groupby("ID")["Dimension"].apply(
-        lambda s: "; ".join(sorted(set(x for x in s if x in config.DIMENSIONS))))
-    as_iv = ind[ind["Role"] == "Independent variable"].groupby("ID")["Dimension"].apply(
-        lambda s: "; ".join(sorted(set(x for x in s if x in config.DIMENSIONS))))
-    roles = c[["Reference", "Approach"]].join(as_dv.rename("Capacity as outcome (DV)")).join(
-        as_iv.rename("Capacity as predictor (IV)")).fillna("")
+    role_by_dim.columns = [f"Papers: {r}" for r in role_by_dim.columns]
+    # Capacity's role in each paper's analysis (outcome, predictor, compared, ...)
+    role_order = [r for r in config.VARIABLE_ROLES if r in set(cap["Role"])]
+    roles = c[["Reference", "Approach"]].copy()
+    for r in role_order:
+        roles[f"Capacity as {r}"] = cap[cap["Role"] == r].groupby("ID")["Dimension"].apply(
+            lambda s: "; ".join(config.DIMENSION_SHORT[x] for x in config.DIMENSIONS if x in set(s)))
+    roles = roles.fillna("")
+    capacity_role_summary = (cap.groupby("Role")["ID"].agg(
+        Papers="nunique", Variables="count", IDs=lambda s: ", ".join(map(str, sorted(set(s)))))
+        .reindex(role_order))
+    capacity_role_summary.index.name = "Role of capacity variables"
+    role_x_dim = pd.crosstab(cap["Dimension"], cap["Role"]).reindex(columns=role_order)
     other_groups = ind[~ind["Is capacity dimension"] & (ind["Dimension"] != "Not grouped")]
     other_constructs = other_groups.groupby("Dimension")["ID"].agg(
         Indicators="count", IDs=lambda s: ", ".join(map(str, sorted(set(s))))).sort_values("Indicators", ascending=False)
-    indicator_list = cap[["ID", "Reference", "Approach", "Role", "Dimension", "Indicator", "Measure type", "Text"]]
+    indicator_list = cap[["ID", "Reference", "Approach", "Source column", "Role", "Role basis", "Dimension", "Indicator", "Measure type", "Text"]]
 
     # 3. Critical elements
     ce = critical_element_matrix(v)
@@ -73,7 +78,8 @@ def main():
         "Dimensions per paper": n_dims, "Co-occurrence": co, "Paper x dimension": paper_dims,
         "Indicators per dimension": indicators_per_dim, "Measure type x dimension": measure_by_dim,
         "Measure types": measure_overall.join(papers_per_measure),
-        "Papers per role": role_by_dim, "Outcome vs predictor": roles,
+        "Papers per role": role_by_dim, "Capacity role summary": capacity_role_summary,
+        "Role x dimension": role_x_dim, "Capacity role per paper": roles,
         "Indicator list": indicator_list, "Other constructs": other_constructs,
         "Critical elements count": ce_counts, "Critical elements x paper": ce_flat,
         "CE use by period": ce_usage, "CE notes": ce_notes,

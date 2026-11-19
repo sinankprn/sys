@@ -9,7 +9,9 @@ The extraction text uses a consistent layout:
 This module walks those lines and returns two separate long tables:
 
 - indicator_table(): quantitative variables only
-    ID | Role (DV / IV / Control) | Dimension | Indicator | Measure type | Text
+    ID | Source column | Role | Role basis | Dimension | Indicator | Measure type | Text
+  Role is fitted to the paper's analysis (outcome/predictor/control for models;
+  grouping/compared/associated/etc. for ANOVA, correlations, EFA, descriptives).
   answers "what did they look at with capacity?" and "how was it measured?".
 - theme_table(): qualitative themes only (Key Themes column)
     ID | Research question | Dimension | Theme | Text
@@ -21,7 +23,7 @@ import re
 import pandas as pd
 
 from . import config
-from .coding import is_na_text
+from .coding import is_na_text, model_families
 
 ROLE_FIELDS = {
     "Dependent variable": "Dependent Variables",
@@ -73,10 +75,13 @@ def parse_block(text, role: str) -> list[dict]:
     """Parse one text block into rows. role='Qualitative theme' for Key Themes."""
     if is_na_text(text):
         return []
-    rows, current, rq = [], "Not grouped", ""
+    rows, current, rq, heading, scope = [], "Not grouped", "", "", ""
     for raw_line in str(text).splitlines():
         line = raw_line.strip()
-        if not line or line.lower().startswith("scope:"):
+        if not line:
+            continue
+        if line.lower().startswith("scope:"):
+            scope = line
             continue
         m = ITEM.match(line)
         if not m:
@@ -87,6 +92,7 @@ def parse_block(text, role: str) -> list[dict]:
                 continue
             dim = _heading_dimension(line)
             current = dim if dim else "Other: " + re.split(r"[\(:]", line)[0].strip()[:60]
+            heading = line
             continue
         body = m.group(1).strip()
         name = re.split(r"[:\(]", body)[0].strip(" .")
@@ -96,22 +102,100 @@ def parse_block(text, role: str) -> list[dict]:
             if inline and _heading_dimension(inline.group(1)):
                 dim_here = _heading_dimension(inline.group(1))
         row = {"Role": role, "Research question": rq, "Dimension": dim_here,
-               "Indicator": name[:120], "Text": body}
+               "Indicator": name[:120], "Text": body, "_context": f"{scope} {heading}"}
         if role != "Qualitative theme":
             row["Measure type"] = measure_type(body)
         rows.append(row)
     return rows
 
 
-def indicator_table(values: pd.DataFrame) -> pd.DataFrame:
-    """Quantitative variables (DV / IV / controls). Qualitative themes are excluded."""
+SOURCE_LABEL = {"Dependent variable": "Dependent Variables",
+                "Independent variable": "Independent Variables",
+                "Control variable": "Control Variables"}
+
+
+def analysis_profile(models_text) -> dict:
+    fams = set(model_families(models_text))
+    # Also scan placeholder text such as "N/A (descriptive; ... correlations only)"
+    if isinstance(models_text, str):
+        fams |= {name for name, pat in config.MODEL_FAMILIES if re.search(pat, models_text, re.I)}
+    return {
+        "outcome_model": bool(fams & config.OUTCOME_MODEL_FAMILIES),
+        "comparison": bool(fams & config.COMPARISON_FAMILIES),
+        "correlation": "Correlation / bivariate tests" in fams,
+        "factor": "Factor analysis (EFA/CFA)" in fams,
+    }
+
+
+def auto_role(source: str, context: str, text: str, prof: dict) -> tuple[str, str]:
+    """Best-guess role and the basis for it. Basis wording ending in 'check'
+    means the guess is weak and worth confirming against the paper."""
+    cue = f"{context} {text}".lower()
+    if "grouping" in cue:
+        return "Grouping variable", "Stated in extraction (heading)"
+    if "matching" in cue:
+        return "Matching variable", "Stated in extraction (heading)"
+    if re.search(r"moderat|interaction", cue):
+        return "Moderator / interaction", "Stated in extraction (text)"
+    if re.search(r"no iv/dv roles|measured variables", cue):
+        if prof["comparison"]:
+            return "Compared variable", "Extraction says no IV/DV roles; paper uses group comparisons - check"
+        return "Measured only", "Stated in extraction (heading)"
+
+    if prof["outcome_model"]:
+        role = {"Dependent variable": "Outcome (DV)", "Independent variable": "Predictor (IV)",
+                "Control variable": "Control"}[source]
+        if prof["comparison"] or prof["factor"]:
+            return role, f"From '{SOURCE_LABEL[source]}' column; paper also runs comparisons/factor analysis - check which analysis"
+        return role, f"From '{SOURCE_LABEL[source]}' column"
+
+    # No model with an outcome: translate DV/IV/control into analysis-appropriate roles
+    if prof["comparison"]:
+        role = "Compared variable" if source == "Dependent variable" else "Grouping variable"
+        return role, "No outcome model; paper uses group comparisons - check"
+    if prof["correlation"]:
+        return "Associated variable", "No outcome model; correlations only"
+    if prof["factor"]:
+        return "Scale item / factor", "No outcome model; factor analysis"
+    return "Measured only", "No outcome model; descriptive"
+
+
+def read_role_overrides() -> pd.DataFrame:
+    p = config.ROLES_CSV
+    if not p.exists():
+        return pd.DataFrame(columns=["ID", "Source column", "Indicator", "Role"])
+    return pd.read_csv(p, dtype={"ID": int})
+
+
+def indicator_table(values: pd.DataFrame, apply_overrides: bool = True) -> pd.DataFrame:
+    """Quantitative variables, one row each. Qualitative themes are excluded.
+
+    Source column = where the variable sits in the extraction sheet.
+    Role          = what it does in the analysis (see config.VARIABLE_ROLES),
+                    guessed automatically and overridden by reviewer decisions in
+                    data/corrections/indicator_roles.csv.
+    """
     rows = []
     for pid, rec in values.iterrows():
-        for role, field in ROLE_FIELDS.items():
-            for r in parse_block(rec.get(field), role):
-                r.pop("Research question", None)
-                rows.append({"ID": pid, **r})
-    df = pd.DataFrame(rows, columns=["ID", "Role", "Dimension", "Indicator", "Measure type", "Text"])
+        prof = analysis_profile(rec.get("Statistical Models"))
+        for source, field in ROLE_FIELDS.items():
+            for r in parse_block(rec.get(field), source):
+                role, basis = auto_role(source, r["_context"], r["Text"], prof)
+                rows.append({"ID": pid, "Source column": SOURCE_LABEL[source], "Role": role,
+                             "Role basis": basis, "Dimension": r["Dimension"],
+                             "Indicator": r["Indicator"], "Measure type": r["Measure type"],
+                             "Text": r["Text"]})
+    df = pd.DataFrame(rows, columns=["ID", "Source column", "Role", "Role basis", "Dimension",
+                                     "Indicator", "Measure type", "Text"])
+    if apply_overrides:
+        ov = read_role_overrides()
+        if len(ov):
+            key = ["ID", "Source column", "Indicator"]
+            df = df.merge(ov[key + ["Role"]].rename(columns={"Role": "_override"}), on=key, how="left")
+            hit = df["_override"].notna()
+            df.loc[hit, "Role"] = df.loc[hit, "_override"]
+            df.loc[hit, "Role basis"] = "Confirmed by reviewer"
+            df = df.drop(columns="_override")
     df["Is capacity dimension"] = df["Dimension"].isin(config.DIMENSIONS)
     return df
 
@@ -121,6 +205,7 @@ def theme_table(values: pd.DataFrame) -> pd.DataFrame:
     rows = []
     for pid, rec in values.iterrows():
         for r in parse_block(rec.get(THEME_FIELD), "Qualitative theme"):
+            r.pop("_context", None)
             rows.append({"ID": pid, "Research question": r["Research question"],
                          "Dimension": r["Dimension"], "Theme": r["Indicator"], "Text": r["Text"]})
     df = pd.DataFrame(rows, columns=["ID", "Research question", "Dimension", "Theme", "Text"])

@@ -4,6 +4,7 @@
 
 - 'Corrected' / 'Not reported in paper' rows  -> data/corrections/corrections.csv
 - 'Confirmed' rows                            -> data/corrections/verifications.csv
+- 'Variable roles' tab, Confirmed role       -> data/corrections/indicator_roles.csv
 - 'Unsure - discuss' rows                     -> printed, and saved to output/review/to_discuss.xlsx
 
 Every later script loads the raw sheet and applies these logs on top, so the
@@ -49,11 +50,24 @@ def main(files):
             elif str(dec).startswith("Unsure"):
                 discuss.append(r)
 
-    def merge(path, rows, cols):
+    role_rows = []
+    for f in files:
+        try:
+            vr = pd.read_excel(f, sheet_name="Variable roles")
+        except ValueError:
+            continue
+        for _, r in vr[vr["Confirmed role"].notna()].iterrows():
+            role_rows.append({"ID": int(r["ID"]), "Source column": r["Source column"],
+                              "Indicator": r["Indicator"], "Role": r["Confirmed role"],
+                              "Suggested role": r["Suggested role"], "Reviewer": r.get("Reviewer"),
+                              "Location in paper": r.get("Page / location"), "Notes": r.get("Notes"),
+                              "Date": today, "Source file": str(f)})
+
+    def merge(path, rows, cols, key=("ID", "Field")):
         new = pd.DataFrame(rows, columns=cols)
         if path.exists():
             new = pd.concat([pd.read_csv(path), new], ignore_index=True)
-        new = new.drop_duplicates(subset=["ID", "Field"], keep="last")
+        new = new.drop_duplicates(subset=list(key), keep="last")
         path.parent.mkdir(parents=True, exist_ok=True)
         new.to_csv(path, index=False)
         return len(new)
@@ -63,6 +77,11 @@ def main(files):
                     "Location in paper", "Date", "Notes", "Source file"])
     n_ver = merge(config.VERIFICATIONS_CSV, ver_rows,
                   ["ID", "Field", "Reviewer", "Location in paper", "Date", "Source file"])
+    n_roles = merge(config.ROLES_CSV, role_rows,
+                    ["ID", "Source column", "Indicator", "Role", "Suggested role", "Reviewer",
+                     "Location in paper", "Notes", "Date", "Source file"],
+                    key=("ID", "Source column", "Indicator"))
+    print(f"Logged {len(role_rows)} variable roles ({n_roles} total).")
     print(f"Logged {len(corr_rows)} corrections ({n_corr} total) and "
           f"{len(ver_rows)} confirmations ({n_ver} total).")
     if discuss:

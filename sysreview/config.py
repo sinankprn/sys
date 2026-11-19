@@ -10,6 +10,7 @@ RAW_WORKBOOK = ROOT / "data" / "raw" / "extraction.xlsx"
 DATA_SHEET = "Sheet1"
 CORRECTIONS_CSV = ROOT / "data" / "corrections" / "corrections.csv"
 VERIFICATIONS_CSV = ROOT / "data" / "corrections" / "verifications.csv"
+ROLES_CSV = ROOT / "data" / "corrections" / "indicator_roles.csv"
 OUTPUT = ROOT / "output"
 TABLES = OUTPUT / "tables"
 FIGURES = OUTPUT / "figures"
@@ -80,6 +81,29 @@ MODEL_FAMILIES = [
     ("Qualitative analysis (mixed-methods strand)", r"thematic|content analysis"),
     ("Descriptive statistics", r"descriptive"),
 ]
+
+# Roles a variable can play in the Indicators sheet. Not every analysis has an
+# outcome: group comparisons, correlations and factor analyses use the last five.
+VARIABLE_ROLES = [
+    "Outcome (DV)",          # regression / model outcome
+    "Predictor (IV)",        # regression / model predictor of interest
+    "Control",               # included to adjust, not interpreted
+    "Moderator / interaction",
+    "Matching variable",     # used to build comparison groups
+    "Grouping variable",     # defines the groups in ANOVA / t-test / chi-square / Mann-Whitney
+    "Compared variable",     # measured and compared across groups
+    "Associated variable",   # correlation: neither side is the outcome
+    "Scale item / factor",   # factor analysis / scale development
+    "Measured only",         # descriptive, no analytic role
+    "Unclear",
+]
+# Model families that have an outcome variable.
+OUTCOME_MODEL_FAMILIES = {
+    "Social network analysis (QAP)", "Multilevel / mixed-effects", "Probit regression",
+    "Ordered logit", "Fractional logit", "Logistic regression", "Quantile regression",
+    "Linear regression (OLS)",
+}
+COMPARISON_FAMILIES = {"ANOVA / t-test", "Non-parametric tests"}
 
 # Doherty, Misener & Cuskelly (2014) critical elements, with keyword patterns used
 # to find them in each paper's variables / themes. CHECK this list against

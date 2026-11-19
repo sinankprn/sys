@@ -3,7 +3,7 @@
 Output: output/organised_extraction.xlsx with
   - Overview      one row per paper with the coded/simplified columns
   - one tab per section (Publication, Sample, Design, Capacity, Modelling, Findings)
-  - Indicators (quantitative)  one row per variable, tagged with dimension and measure type
+  - Indicators (quantitative)  one row per variable: dimension, role in the analysis, measure type
   - Themes (qualitative)       one row per qualitative theme, tagged with dimension
   - Verification  which fields are ticked, per paper
 """
@@ -29,7 +29,7 @@ def main():
         for section, fields in config.SECTIONS.items():
             cols = [f for f in fields if f in v.columns]
             v[cols].join(c["Reference"]).loc[:, ["Reference"] + cols].to_excel(xw, sheet_name=section)
-        ind[["ID", "Reference", "Role", "Dimension", "Indicator", "Measure type", "Text"]] \
+        ind[["ID", "Reference", "Source column", "Role", "Role basis", "Dimension", "Indicator", "Measure type", "Text"]] \
             .to_excel(xw, sheet_name="Indicators (quantitative)", index=False)
         themes[["ID", "Reference", "Approach", "Research question", "Dimension", "Theme", "Text"]] \
             .to_excel(xw, sheet_name="Themes (qualitative)", index=False)

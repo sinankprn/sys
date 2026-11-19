@@ -21,6 +21,7 @@ from openpyxl.styles import Alignment, Font, PatternFill
 from openpyxl.worksheet.datavalidation import DataValidation
 
 from sysreview import config, qa
+from sysreview.indicators import indicator_table
 from sysreview.load import load, short_ref
 
 DECISIONS = ["Confirmed", "Corrected", "Not reported in paper", "Unsure - discuss"]
@@ -135,10 +136,56 @@ def main():
     ws.freeze_panes = "E2"
     ws.auto_filter.ref = f"A1:L{r}"
 
+    # --- variable roles: one row per quantitative variable
+    wr = wb.create_sheet("Variable roles")
+    ind = indicator_table(v)
+    ind = ind[ind["ID"].isin(order)]
+    ind["_o"] = ind["ID"].map({p: i for i, p in enumerate(order)})
+    ind = ind.sort_values(["_o"], kind="stable")
+    hdr = ["ID", "Reference", "Source column", "Indicator", "Dimension", "Text",
+           "Suggested role", "Role basis", "Confirmed role", "Page / location", "Notes", "Reviewer"]
+    wr.append(hdr)
+    for i, w in enumerate([5, 22, 18, 30, 22, 60, 20, 40, 20, 16, 30, 10]):
+        wr.column_dimensions[chr(65 + i)].width = w
+    rr = 1
+    for _, x in ind.iterrows():
+        confirmed = x["Role"] if x["Role basis"] == "Confirmed by reviewer" else ""
+        wr.append([x["ID"], refs[x["ID"]], x["Source column"], x["Indicator"],
+                   config.DIMENSION_SHORT.get(x["Dimension"], x["Dimension"]), x["Text"],
+                   x["Role"], x["Role basis"], confirmed, "", "", args.reviewer])
+        rr += 1
+        check = "check" in x["Role basis"]
+        for cell in wr[rr]:
+            cell.alignment = Alignment(wrap_text=True, vertical="top")
+            if check:
+                cell.fill = PatternFill("solid", fgColor=FILL["Medium"])
+    roles_dv = DataValidation(type="list", formula1='"' + ",".join(config.VARIABLE_ROLES) + '"', allow_blank=True)
+    wr.add_data_validation(roles_dv)
+    roles_dv.add(f"I2:I{rr}")
+    for cell in wr[1]:
+        cell.font = Font(bold=True, color="FFFFFF")
+        cell.fill = PatternFill("solid", fgColor="1C5CAB")
+    wr.freeze_panes = "E2"
+    wr.auto_filter.ref = f"A1:L{rr}"
+    guide = [
+        "", "VARIABLE ROLES tab",
+        "Each quantitative variable has a Suggested role. Amber rows are weak guesses - confirm those first.",
+        "Pick a 'Confirmed role' only where you have checked the paper (leave blank to keep the suggestion).",
+        "Roles: Outcome (DV) / Predictor (IV) / Control - models with an outcome (regression, logit, multilevel...).",
+        "  Grouping variable = defines the groups in ANOVA, t-test, chi-square, Mann-Whitney (e.g. club size bands).",
+        "  Compared variable = what is measured and compared across those groups.",
+        "  Associated variable = correlations (neither side is the outcome).",
+        "  Scale item / factor = factor analysis; Measured only = descriptive; Matching variable = used to match groups.",
+        "  If a variable plays different roles in different analyses of one paper, choose the role in the main",
+        "  analysis and note the other in Notes.",
+    ]
+    for i, l in enumerate(guide, len(lines) + 1):
+        ws0.cell(i, 1, l)
+
     config.REVIEW.mkdir(parents=True, exist_ok=True)
     out = config.REVIEW / f"review_{args.reviewer}{'_blind' if args.blind else ''}.xlsx"
     wb.save(out)
-    print(f"06 review workbook: {len(order)} papers, {r - 1} rows -> {out}")
+    print(f"06 review workbook: {len(order)} papers, {r - 1} field rows, {rr - 1} variable-role rows -> {out}")
 
 
 if __name__ == "__main__":

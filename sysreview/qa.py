@@ -129,7 +129,7 @@ def check_consistency(v, c):
         if pd.isna(year) or not 1990 <= year <= 2026:
             out.append(_issue(pid, "Year of Publication", "High", "Year", f"Implausible year '{year}'."))
         # measurement detail missing for variables
-        q = ind[(ind["ID"] == pid) & ind["Role"].isin(["Independent variable", "Dependent variable"])]
+        q = ind[(ind["ID"] == pid) & ind["Source column"].isin(["Independent Variables", "Dependent Variables"])]
         missing = q[q["Measure type"] == "Not stated"]
         if len(q) and len(missing) / len(q) > 0.4:
             out.append(_issue(pid, "Independent Variables", "Medium", "Measurement detail",

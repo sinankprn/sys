@@ -29,9 +29,32 @@ python scripts/run_all.py
 | `03b_qualitative_themes.py` | Qualitative themes, kept separate: themes per dimension, papers that frame themes by dimension vs inductively, non-capacity theme groups, full theme list | `03b_qualitative_themes.xlsx`, `03b_*.png` |
 | `04_models.py` | Statistical models employed (grouped into families), by period, per paper | `04_models.xlsx`, `04_*.png` |
 | `05_quality_checks.py` | Missing, inconsistent and unverified data; per-paper re-review priority | `05_quality_checks.xlsx` |
-| `06_make_review_workbook.py` | Builds a re-review workbook | `output/review/review_<name>.xlsx` |
-| `07_apply_review.py` | Logs decisions from a completed review workbook | `data/corrections/corrections.csv`, `verifications.csv` |
+| `06_make_review_workbook.py` | Builds a re-review workbook (field checks + Variable roles tab) | `output/review/review_<name>.xlsx` |
+| `07_apply_review.py` | Logs decisions from a completed review workbook | `data/corrections/corrections.csv`, `verifications.csv`, `indicator_roles.csv` |
 | `08_agreement.py` | Agreement between two independent reviewers | `output/tables/08_agreement.xlsx` |
+
+### Variable roles
+
+In the Indicators sheet, **Source column** is where a variable sits in the extraction
+(Dependent / Independent / Control Variables). **Role** is what it does in the analysis.
+Not every analysis has an outcome, so the role is fitted to the paper's methods:
+
+| Paper's analysis | Roles used |
+|---|---|
+| Regression / logit / probit / multilevel / QAP | Outcome (DV), Predictor (IV), Control, Moderator / interaction |
+| ANOVA, t-test, chi-square, Mann-Whitney, Kruskal-Wallis | Grouping variable (defines the groups), Compared variable (measured across them) |
+| Correlations only | Associated variable |
+| Factor analysis / scale development | Scale item / factor |
+| Descriptive only | Measured only |
+| Any | Matching variable, Unclear |
+
+Roles are suggested automatically, and **Role basis** shows how each was decided. Bases
+ending in "check" are weak guesses, for example papers that run both regressions and
+ANOVAs. Confirm or change them in the **Variable roles** tab of the review workbook.
+`07_apply_review.py` logs your decisions to `data/corrections/indicator_roles.csv`,
+and those override the suggestions from then on. When one variable plays different
+roles in different analyses of the same paper, record its role in the main analysis
+and note the other role.
 
 How free text is grouped into categories (model families, respondent types,
 critical-element keywords, data-collection methods) is set in
