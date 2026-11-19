@@ -22,7 +22,7 @@ python scripts/run_all.py
 
 | Script | Answers | Main outputs |
 |---|---|---|
-| `00_organise_extraction.py` | A cleaner copy of the extraction | `output/organised_extraction.xlsx` (Overview, Indicators (quantitative), Themes (qualitative)) and `output/extraction_by_section.xlsx` (one tab per section, Verification) |
+| `00_organise_extraction.py` | A cleaner copy of the extraction | `output/organised_extraction.xlsx` (Overview, Indicators (quantitative), Themes (qualitative), Limitations & future research) and `output/extraction_by_section.xlsx` (one tab per section, Verification) |
 | `01_publication.py` | Publications by year, authors, countries, sport, journal | `output/tables/01_publication.xlsx`, `output/figures/01_*.png` |
 | `02_study_design.py` | Quantitative vs qualitative vs mixed, longitudinal vs cross-sectional, sample sizes, respondents, data collection | `02_study_design.xlsx`, `02_*.png` |
 | `03_capacity.py` | Which dimensions received attention, how they were measured, what was looked at (quantitative indicators only), capacity as outcome vs predictor, critical elements | `03_capacity.xlsx`, `03_*.png` |

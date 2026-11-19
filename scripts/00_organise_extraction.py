@@ -4,6 +4,7 @@ output/organised_extraction.xlsx
   - Overview                   one row per paper with the coded/simplified columns
   - Indicators (quantitative)  one row per variable: role, dimension, definition, measure type
   - Themes (qualitative)       one row per qualitative theme, tagged with dimension
+  - Limitations & future research  one row per point, with any note on where it came from
 
 output/extraction_by_section.xlsx
   - one tab per section of the extraction (Publication, Aims, Sample, Design,
@@ -20,6 +21,33 @@ from sysreview.output import format_sheet
 
 INDICATOR_COLS = ["ID", "Reference", "Role", "Dimension", "Indicator", "Definition", "Measure type", "Text"]
 THEME_COLS = ["ID", "Reference", "Approach", "Research question", "Dimension", "Theme", "Text"]
+
+
+def limitations_future(v: pd.DataFrame, refs: pd.Series) -> pd.DataFrame:
+    """One row per bullet point from the Limitations and Future Research columns."""
+    rows = []
+    for pid, rec in v.iterrows():
+        for field, kind in [("Limitations", "Limitation"), ("Future Research", "Future research")]:
+            text = rec.get(field)
+            if pd.isna(text):
+                continue
+            note, points = "", []
+            for line in str(text).splitlines():
+                line = line.strip()
+                if not line:
+                    continue
+                if line.lower().startswith("note:"):
+                    note = line[5:].strip()
+                elif line.startswith(("•", "-", "*")):
+                    points.append(line.lstrip("•-* ").strip())
+                elif points:                      # wrapped continuation of the previous point
+                    points[-1] += " " + line
+                else:
+                    points.append(line)
+            for n, pt in enumerate(points, 1):
+                rows.append({"ID": pid, "Reference": refs[pid], "Type": kind, "No.": n,
+                             "Point": pt, "Note": note})
+    return pd.DataFrame(rows, columns=["ID", "Reference", "Type", "No.", "Point", "Note"])
 
 
 def _write(path, sheets: dict):
@@ -42,6 +70,7 @@ def main():
         "Overview": (c, True),
         "Indicators (quantitative)": (ind[INDICATOR_COLS], False),
         "Themes (qualitative)": (themes[THEME_COLS], False),
+        "Limitations & future research": (limitations_future(v, c["Reference"]), False),
     })
 
     sections = {}
