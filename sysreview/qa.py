@@ -123,7 +123,7 @@ def check_consistency(v, c):
             out.append(_issue(pid, "Research Method", "Medium", "Research method category",
                               f"Classified as '{rm}' from '{rec['Research Method']}'. "
                               "Edit the text (e.g. 'Case study (single)' or 'Case study (multiple)') to fix."))
-        if c.at[pid, "Respondent type"] == config.RESPONDENT_FALLBACK:
+        if c.at[pid, "Respondent types"] == config.RESPONDENT_UNSPECIFIED:
             out.append(_issue(pid, "Respondents", "Info", "Respondent category",
                               "Role of respondents not specified - check the paper for who completed the survey."))
         # design wording

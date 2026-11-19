@@ -74,8 +74,15 @@ def research_method(text) -> str:
     return _first_match(text, config.RESEARCH_METHOD_CATEGORIES, "Not classified")
 
 
-def respondent_type(text) -> str:
-    return _first_match(text, config.RESPONDENT_CATEGORIES, config.RESPONDENT_FALLBACK)
+def respondent_types(text) -> list[str]:
+    """Fixed respondent names found in the text, in a fixed order. 'Role not
+    specified' is only used when no leadership role is named."""
+    if pd.isna(text):
+        return ["Not reported"]
+    found = [name for name, pat in config.RESPONDENT_TYPES if re.search(pat, str(text), flags=re.I)]
+    if "Board members / club leaders" in found and config.RESPONDENT_UNSPECIFIED in found:
+        found.remove(config.RESPONDENT_UNSPECIFIED)
+    return found or [config.RESPONDENT_UNSPECIFIED]
 
 
 def approach(text) -> str:
@@ -175,7 +182,7 @@ def coded_table(values: pd.DataFrame) -> pd.DataFrame:
         lambda t: "; ".join(tags(t, config.COLLECTION_TAGS)))
     df["Sample size"] = pd.to_numeric(values["Final Club Sample Size"], errors="coerce").astype("Int64")
     df["Sample band"] = values["Final Club Sample Size"].map(sample_band)
-    df["Respondent type"] = values["Respondents"].map(respondent_type)
+    df["Respondent types"] = values["Respondents"].map(lambda t: "; ".join(respondent_types(t)))
     for d in config.DIMENSIONS + ["External Influences"]:
         df[config.DIMENSION_SHORT[d]] = values[d].map(yes)
     df["N dimensions"] = df[[config.DIMENSION_SHORT[d] for d in config.DIMENSIONS]].sum(axis=1)

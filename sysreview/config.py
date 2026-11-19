@@ -144,18 +144,24 @@ CRITICAL_ELEMENTS = {
     },
 }
 
-# Respondent type: ONE fixed category per paper. Rules are tried in order; the
-# first match wins, otherwise the fallback category is used.
-RESPONDENT_CATEGORIES = [
-    ("Club representatives + members (multi-level)",
-     r"member survey|club members|parents of underage"),
-    ("Multiple stakeholder groups",
-     r"coach|player|parent|spectator|umpire|stakeholder|\band staff\b"),
+# Respondent types: fixed names, several per paper (joined with "; ").
+# Each name is added when its pattern matches the Respondents text.
+RESPONDENT_TYPES = [
     ("Board members / club leaders",
-     r"board|president|chair|executive|secretar|treasurer|manager|leadership"),
+     r"board|president|chair|executive|secretar|treasurer|manager|leadership|club administrator"),
+    ("Club representatives (role not specified)", r"club representative|organisation representative"),
+    ("Paid staff", r"paid staff|paid administrator|office employee|\bstaff\b"),
+    ("Other volunteers", r"other volunteers|implementation-level volunteers"),
+    ("Coaches", r"coach"),
+    ("Officials (referees / umpires / league)", r"umpire|referee|league official"),
+    ("Players / athletes", r"player|athlete"),
+    ("Club members", r"member survey|club members"),
+    ("Parents", r"parent"),
+    ("Spectators", r"spectator"),
+    ("Other stakeholders", r"stakeholder|software developer"),
 ]
-RESPONDENT_FALLBACK = "Club representatives (role not specified)"
-RESPONDENT_ORDER = [c for c, _ in RESPONDENT_CATEGORIES] + [RESPONDENT_FALLBACK]
+RESPONDENT_ORDER = [name for name, _ in RESPONDENT_TYPES]
+RESPONDENT_UNSPECIFIED = "Club representatives (role not specified)"
 
 # Research method: ONE fixed category per paper (first matching rule wins).
 RESEARCH_METHOD_CATEGORIES = [

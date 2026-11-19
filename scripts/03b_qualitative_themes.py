@@ -24,7 +24,7 @@ def main():
     t = theme_table(v).merge(c[["Reference", "Approach"]], left_on="ID", right_index=True)
 
     papers = qual[["Reference", "Year", "Approach", "Research method", "Data collection",
-                   "Sample size", "Respondent type"]].join(v[["Data Analysis"]])
+                   "Sample size", "Respondent types"]].join(v[["Data Analysis"]])
     papers["Themes extracted"] = t.groupby("ID").size().reindex(qual.index, fill_value=0)
     papers["Themes grouped by capacity dimension"] = (
         t[t["Is capacity dimension"]].groupby("ID").size().reindex(qual.index, fill_value=0))

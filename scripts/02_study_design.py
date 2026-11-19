@@ -44,12 +44,16 @@ def main():
     shared_data = (pd.DataFrame({"Dataset key": shared, "Reference": c.loc[shared.index, "Reference"]})
                    .sort_values("Dataset key"))
 
-    # Respondents (one fixed category per paper)
-    order = [r for r in config.RESPONDENT_ORDER if r in set(c["Respondent type"])]
-    respondents = c["Respondent type"].value_counts().reindex(order).to_frame("Papers")
+    # Respondents: fixed names, several per paper
+    resp_long = c["Respondent types"].str.split("; ").explode()
+    order = [r for r in config.RESPONDENT_ORDER if r in set(resp_long)]
+    respondents = resp_long.value_counts().reindex(order).to_frame("Papers")
     respondents.index.name = "Respondent type"
-    resp_x_approach = pd.crosstab(c["Respondent type"], c["Approach"]).reindex(order)
-    resp_detail = c[["Reference", "Respondent type"]].join(v[["Respondents"]].rename(
+    respondents["% of papers"] = (respondents["Papers"] / len(c) * 100).round(1)
+    resp_x_approach = pd.crosstab(resp_long.values, c.loc[resp_long.index, "Approach"].values,
+                                  rownames=["Respondent type"], colnames=["Approach"]).reindex(order)
+    resp_x_approach.index.name = "Respondent type"
+    resp_detail = c[["Reference", "Respondent types"]].join(v[["Respondents"]].rename(
         columns={"Respondents": "Respondents (as extracted)"}))
 
     write_tables("02_study_design", {
@@ -66,7 +70,8 @@ def main():
         [x for x in ["Quantitative", "Qualitative", "Mixed methods"] if x in set(c["Approach"])]],
         "Time design by approach", "02_design", colours=APPROACH_COLOURS)
     stacked_bar(bands, "Sample size (clubs or cases)", "02_sample_bands", colours=APPROACH_COLOURS)
-    hbar(respondents["Papers"], "Who responded", "02_respondents")
+    hbar(respondents["Papers"], "Who responded", "02_respondents",
+         note="A paper can have several respondent types.")
     hbar(method["Papers"], "Research method", "02_research_method")
     hbar(collection["Papers"], "Data collection methods", "02_collection",
          note="A paper can use several methods.")

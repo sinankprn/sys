@@ -63,7 +63,7 @@ and note the other role.
 | Multi-sport | Yes (sample covers more than one sport, including two named sports) / No |
 | Sports | Named sports separated by `;`, or **Not specified** |
 | Research method | Survey: single wave · Survey: repeated waves (panel) · Survey: clubs + members (multilevel) · Case study (single) · Case study (multiple) · Case study (type not stated) · Interviews · Focus groups · Mixed methods · Social network analysis |
-| Respondent type | Board members / club leaders · Club representatives (role not specified) · Club representatives + members (multi-level) · Multiple stakeholder groups |
+| Respondent types | Several per paper, separated by `;`, from: Board members / club leaders · Club representatives (role not specified) · Paid staff · Other volunteers · Coaches · Officials (referees / umpires / league) · Players / athletes · Club members · Parents · Spectators · Other stakeholders |
 
 These are derived from the free text in Sheet1, which is kept alongside in the
 "... detail" tabs. To move a paper to another category, correct its text in the
