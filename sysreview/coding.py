@@ -167,6 +167,7 @@ def coded_table(values: pd.DataFrame) -> pd.DataFrame:
 
     df = pd.DataFrame(index=values.index)
     df["Reference"] = short_ref(values)
+    df["DOI"] = values["DOI"]
     df["Year"] = pd.to_numeric(values["Year of Publication"], errors="coerce").astype("Int64")
     df["Journal"] = values["Journal"]
     df["N authors"] = values["Authors"].map(lambda t: len(authors(t)))
