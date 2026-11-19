@@ -6,9 +6,13 @@ The extraction text uses a consistent layout:
     1. Board capacity (continuous, 5-point Likert scale): description
     2. ...
 
-This module walks those lines and returns a long table:
-    ID | Role (DV / IV / Control / Theme) | Dimension | Indicator | Measure type | Text
-which answers "what did they look at with capacity?" and "how was it measured?".
+This module walks those lines and returns two separate long tables:
+
+- indicator_table(): quantitative variables only
+    ID | Role (DV / IV / Control) | Dimension | Indicator | Measure type | Text
+  answers "what did they look at with capacity?" and "how was it measured?".
+- theme_table(): qualitative themes only (Key Themes column)
+    ID | Research question | Dimension | Theme | Text
 """
 from __future__ import annotations
 
@@ -23,8 +27,8 @@ ROLE_FIELDS = {
     "Dependent variable": "Dependent Variables",
     "Independent variable": "Independent Variables",
     "Control variable": "Control Variables",
-    "Qualitative theme": "Key Themes (Qualitative Studies)",
 }
+THEME_FIELD = "Key Themes (Qualitative Studies)"
 
 MEASURE_TYPES = [
     ("Likert / rating scale", r"likert|\d-point|1 = no problem|1 = not at all|1 = strongly|scale\)|rating|\b1 \(?[a-z ]*\)? ?to [5-7]\b|\b1 to [5-7]\b"),
@@ -66,46 +70,60 @@ ITEM = re.compile(r"^\s*(?:\d+[\.\)]|[•\-\*])\s*(.+)$")
 
 
 def parse_block(text, role: str) -> list[dict]:
+    """Parse one text block into rows. role='Qualitative theme' for Key Themes."""
     if is_na_text(text):
         return []
-    rows, current = [], "Not grouped"
+    rows, current, rq = [], "Not grouped", ""
     for raw_line in str(text).splitlines():
         line = raw_line.strip()
         if not line or line.lower().startswith("scope:"):
             continue
         m = ITEM.match(line)
         if not m:
+            rq_match = re.match(r"^(RQ\d+)\s*:?\s*(.*)$", line)
+            if rq_match:
+                rq = line
+                current = "Not grouped"
+                continue
             dim = _heading_dimension(line)
-            if dim:
-                current = dim
-            elif not re.match(r"^RQ\d", line):
-                current = "Other: " + re.split(r"[\(:]", line)[0].strip()[:60]
+            current = dim if dim else "Other: " + re.split(r"[\(:]", line)[0].strip()[:60]
             continue
         body = m.group(1).strip()
-        # Several controls can be packed into one comma list ("Age, gender, ...")
         name = re.split(r"[:\(]", body)[0].strip(" .")
         dim_here = current
         if current == "Not grouped":   # e.g. "volunteers_capita (Human Resources): ..."
             inline = re.search(r"\(([A-Z][A-Za-z ]+?)(?: Capacity)?\)", body)
             if inline and _heading_dimension(inline.group(1)):
                 dim_here = _heading_dimension(inline.group(1))
-        rows.append({
-            "Role": role,
-            "Dimension": dim_here,
-            "Indicator": name[:120],
-            "Measure type": measure_type(body) if role != "Qualitative theme" else "Qualitative (themes)",
-            "Text": body,
-        })
+        row = {"Role": role, "Research question": rq, "Dimension": dim_here,
+               "Indicator": name[:120], "Text": body}
+        if role != "Qualitative theme":
+            row["Measure type"] = measure_type(body)
+        rows.append(row)
     return rows
 
 
 def indicator_table(values: pd.DataFrame) -> pd.DataFrame:
+    """Quantitative variables (DV / IV / controls). Qualitative themes are excluded."""
     rows = []
     for pid, rec in values.iterrows():
         for role, field in ROLE_FIELDS.items():
             for r in parse_block(rec.get(field), role):
+                r.pop("Research question", None)
                 rows.append({"ID": pid, **r})
-    df = pd.DataFrame(rows)
+    df = pd.DataFrame(rows, columns=["ID", "Role", "Dimension", "Indicator", "Measure type", "Text"])
+    df["Is capacity dimension"] = df["Dimension"].isin(config.DIMENSIONS)
+    return df
+
+
+def theme_table(values: pd.DataFrame) -> pd.DataFrame:
+    """Qualitative themes from the Key Themes column, one row per theme."""
+    rows = []
+    for pid, rec in values.iterrows():
+        for r in parse_block(rec.get(THEME_FIELD), "Qualitative theme"):
+            rows.append({"ID": pid, "Research question": r["Research question"],
+                         "Dimension": r["Dimension"], "Theme": r["Indicator"], "Text": r["Text"]})
+    df = pd.DataFrame(rows, columns=["ID", "Research question", "Dimension", "Theme", "Text"])
     df["Is capacity dimension"] = df["Dimension"].isin(config.DIMENSIONS)
     return df
 
@@ -114,7 +132,7 @@ def critical_element_matrix(values: pd.DataFrame) -> pd.DataFrame:
     """Paper x critical element: True where the element's keywords appear in
     the paper's variables or themes. Keyword hits are a prompt to check, not a
     final coding decision."""
-    fields = list(ROLE_FIELDS.values()) + config.PER_DIMENSION_IV + ["Critical Elements Notes"]
+    fields = list(ROLE_FIELDS.values()) + [THEME_FIELD] + config.PER_DIMENSION_IV + ["Critical Elements Notes"]
     out = {}
     for pid, rec in values.iterrows():
         blob = " \n".join(str(rec.get(f, "")) for f in fields if not pd.isna(rec.get(f)))

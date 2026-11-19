@@ -13,7 +13,7 @@ import urllib.request
 import pandas as pd
 
 from . import coding, config
-from .indicators import critical_element_matrix, indicator_table
+from .indicators import critical_element_matrix, indicator_table, theme_table
 
 DOHERTY_YEAR = 2014
 
@@ -59,6 +59,7 @@ def check_not_reported(v):
 def check_consistency(v, c):
     out = []
     ind = indicator_table(v)
+    themes = theme_table(v)
     ce = critical_element_matrix(v)
     for pid, rec in v.iterrows():
         appr, year = c.at[pid, "Approach"], c.at[pid, "Year"]
@@ -74,7 +75,7 @@ def check_consistency(v, c):
             out.append(_issue(pid, "Key Themes (Qualitative Studies)", "High", "Approach vs themes",
                               "Qualitative paper without key themes."))
         # dimension flags vs what the variables/themes actually contain
-        found = set(ind.loc[ind["ID"] == pid, "Dimension"])
+        found = set(ind.loc[ind["ID"] == pid, "Dimension"]) | set(themes.loc[themes["ID"] == pid, "Dimension"])
         for d in config.DIMENSIONS:
             flag = coding.yes(rec[d])
             if flag and d not in found:

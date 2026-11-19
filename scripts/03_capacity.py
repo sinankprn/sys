@@ -1,5 +1,6 @@
-"""Analysis of capacity: which dimensions, how measured, what was looked at,
-and use of Doherty et al. (2014) critical elements.
+"""Analysis of capacity: which dimensions, how measured, what was looked at
+(quantitative variables), and use of Doherty et al. (2014) critical elements.
+Qualitative themes are analysed separately in 03b_qualitative_themes.py.
 
 Outputs: output/tables/03_capacity.xlsx and output/figures/03_*.png
 """
@@ -33,9 +34,10 @@ def main():
     co = dims[SHORT].astype(int).T.dot(dims[SHORT].astype(int))
     paper_dims = c[["Reference", "Approach"] + SHORT + ["External", "N dimensions"]]
 
-    # 2. What was looked at / how measured (quantitative indicators; qualitative themes)
+    # 2. What was looked at / how measured (quantitative variables only;
+    #    qualitative themes are in 03b_qualitative_themes.py)
     cap = ind[ind["Is capacity dimension"]]
-    quant = cap[cap["Role"] != "Qualitative theme"]
+    quant = cap
     indicators_per_dim = pd.crosstab(cap["Dimension"], cap["Role"])
     measure_by_dim = pd.crosstab(quant["Dimension"], quant["Measure type"])
     measure_overall = quant["Measure type"].value_counts().to_frame("Indicators")

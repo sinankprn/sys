@@ -3,14 +3,15 @@
 Output: output/organised_extraction.xlsx with
   - Overview      one row per paper with the coded/simplified columns
   - one tab per section (Publication, Sample, Design, Capacity, Modelling, Findings)
-  - Indicators    one row per variable/theme, tagged with dimension and measure type
+  - Indicators (quantitative)  one row per variable, tagged with dimension and measure type
+  - Themes (qualitative)       one row per qualitative theme, tagged with dimension
   - Verification  which fields are ticked, per paper
 """
 import _path  # noqa: F401
 import pandas as pd
 
 from sysreview import coding, config
-from sysreview.indicators import indicator_table
+from sysreview.indicators import indicator_table, theme_table
 from sysreview.load import load
 from sysreview.output import format_sheet
 
@@ -19,6 +20,7 @@ def main():
     v, ticks = load()
     c = coding.coded_table(v)
     ind = indicator_table(v).merge(c[["Reference"]], left_on="ID", right_index=True)
+    themes = theme_table(v).merge(c[["Reference", "Approach"]], left_on="ID", right_index=True)
 
     path = config.OUTPUT / "organised_extraction.xlsx"
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -28,7 +30,9 @@ def main():
             cols = [f for f in fields if f in v.columns]
             v[cols].join(c["Reference"]).loc[:, ["Reference"] + cols].to_excel(xw, sheet_name=section)
         ind[["ID", "Reference", "Role", "Dimension", "Indicator", "Measure type", "Text"]] \
-            .to_excel(xw, sheet_name="Indicators", index=False)
+            .to_excel(xw, sheet_name="Indicators (quantitative)", index=False)
+        themes[["ID", "Reference", "Approach", "Research question", "Dimension", "Theme", "Text"]] \
+            .to_excel(xw, sheet_name="Themes (qualitative)", index=False)
         ver = ticks.replace({True: "✓", False: ""})
         ver.insert(0, "Verified", ticks.sum(axis=1).astype(str) + "/" + str(ticks.shape[1]))
         ver.insert(0, "Reference", c["Reference"])

@@ -9,7 +9,7 @@ from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 STEPS = ["00_organise_extraction.py", "01_publication.py", "02_study_design.py",
-         "03_capacity.py", "04_models.py", "05_quality_checks.py"]
+         "03_capacity.py", "03b_qualitative_themes.py", "04_models.py", "05_quality_checks.py"]
 
 if __name__ == "__main__":
     extra = sys.argv[1:]

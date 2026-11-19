@@ -48,7 +48,8 @@ SECTIONS = {
                   "Infrastructure and Process Capacity IV",
                   "Planning and Development Capacity IV", "Other IV",
                   "Independent Variables", "Control Variables"],
-    "Findings": ["Key Themes (Qualitative Studies)", "Limitations", "Future Research"],
+    "Qualitative": ["Key Themes (Qualitative Studies)"],
+    "Findings": ["Limitations", "Future Research"],
 }
 
 # Fields that may legitimately be blank (optional notes).

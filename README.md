@@ -22,10 +22,11 @@ python scripts/run_all.py
 
 | Script | Answers | Main outputs |
 |---|---|---|
-| `00_organise_extraction.py` | A cleaner copy of the extraction | `output/organised_extraction.xlsx` (Overview, one tab per section, Indicators, Verification) |
+| `00_organise_extraction.py` | A cleaner copy of the extraction | `output/organised_extraction.xlsx` (Overview, one tab per section, quantitative Indicators, qualitative Themes, Verification) |
 | `01_publication.py` | Publications by year, authors, countries, sport, journal | `output/tables/01_publication.xlsx`, `output/figures/01_*.png` |
 | `02_study_design.py` | Quantitative vs qualitative vs mixed, longitudinal vs cross-sectional, sample sizes, respondents, data collection | `02_study_design.xlsx`, `02_*.png` |
-| `03_capacity.py` | Which dimensions received attention, how they were measured, what was looked at (indicators), capacity as outcome vs predictor, critical elements | `03_capacity.xlsx`, `03_*.png` |
+| `03_capacity.py` | Which dimensions received attention, how they were measured, what was looked at (quantitative indicators only), capacity as outcome vs predictor, critical elements | `03_capacity.xlsx`, `03_*.png` |
+| `03b_qualitative_themes.py` | Qualitative themes, kept separate: themes per dimension, papers that frame themes by dimension vs inductively, non-capacity theme groups, full theme list | `03b_qualitative_themes.xlsx`, `03b_*.png` |
 | `04_models.py` | Statistical models employed (grouped into families), by period, per paper | `04_models.xlsx`, `04_*.png` |
 | `05_quality_checks.py` | Missing, inconsistent and unverified data; per-paper re-review priority | `05_quality_checks.xlsx` |
 | `06_make_review_workbook.py` | Builds a re-review workbook | `output/review/review_<name>.xlsx` |
