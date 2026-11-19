@@ -20,6 +20,7 @@ from sysreview.load import load
 from sysreview.output import format_sheet
 
 INDICATOR_COLS = ["ID", "Reference", "Role", "Dimension", "Indicator", "Definition", "Measure type", "Text"]
+OVERVIEW_EXCLUDE = ["Respondent types"]   # still analysed in 02_study_design
 THEME_COLS = ["ID", "Reference", "Approach", "Research question", "Dimension", "Theme", "Text"]
 
 
@@ -67,7 +68,7 @@ def main():
     themes = theme_table(v).merge(c[["Reference", "Approach"]], left_on="ID", right_index=True)
 
     main_path = _write(config.OUTPUT / "organised_extraction.xlsx", {
-        "Overview": (c, True),
+        "Overview": (c.drop(columns=OVERVIEW_EXCLUDE), True),
         "Indicators (quantitative)": (ind[INDICATOR_COLS], False),
         "Themes (qualitative)": (themes[THEME_COLS], False),
         "Limitations & future research": (limitations_future(v, c["Reference"]), False),
