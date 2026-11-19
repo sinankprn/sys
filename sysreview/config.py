@@ -144,16 +144,37 @@ CRITICAL_ELEMENTS = {
     },
 }
 
-# Respondent tags (a paper can have several).
-RESPONDENT_TAGS = [
-    ("Board / club leaders", r"board|president|chair|executive|secretar|treasurer|manager|leadership"),
-    ("Club representatives (unspecified role)", r"club representative|organisation representative"),
-    ("Paid staff", r"paid staff|paid administrator|staff|employee"),
-    ("Club members", r"member survey|club members|adult club members"),
-    ("Parents", r"parent"),
-    ("Coaches / officials", r"coach|umpire|referee|official"),
-    ("Players / athletes", r"player|athlete"),
-    ("Other stakeholders", r"stakeholder|spectator|developer"),
+# Respondent type: ONE fixed category per paper. Rules are tried in order; the
+# first match wins, otherwise the fallback category is used.
+RESPONDENT_CATEGORIES = [
+    ("Club representatives + members (multi-level)",
+     r"member survey|club members|parents of underage"),
+    ("Multiple stakeholder groups",
+     r"coach|player|parent|spectator|umpire|stakeholder|\band staff\b"),
+    ("Board members / club leaders",
+     r"board|president|chair|executive|secretar|treasurer|manager|leadership"),
+]
+RESPONDENT_FALLBACK = "Club representatives (role not specified)"
+RESPONDENT_ORDER = [c for c, _ in RESPONDENT_CATEGORIES] + [RESPONDENT_FALLBACK]
+
+# Research method: ONE fixed category per paper (first matching rule wins).
+RESEARCH_METHOD_CATEGORIES = [
+    ("Mixed methods", r"mixed method"),
+    ("Social network analysis", r"network analysis"),
+    ("Case study (single)", r"case study \(single"),
+    ("Case study (multiple)", r"case study \(multiple"),
+    ("Case study (type not stated)", r"case study"),
+    ("Focus groups", r"focus group"),
+    ("Interviews", r"interview"),
+    ("Survey: clubs + members (multilevel)", r"nested|multilevel"),
+    ("Survey: single wave", r"one wave|single wave"),
+    ("Survey: repeated waves (panel)", r"panel|waves"),
+    ("Survey: single wave", r"survey"),
+]
+RESEARCH_METHOD_ORDER = [
+    "Survey: single wave", "Survey: repeated waves (panel)", "Survey: clubs + members (multilevel)",
+    "Case study (single)", "Case study (multiple)", "Case study (type not stated)",
+    "Interviews", "Focus groups", "Mixed methods", "Social network analysis", "Not classified",
 ]
 
 # Data collection tags.

@@ -19,7 +19,13 @@ def main():
     time = c["Time design"].value_counts().to_frame("Papers")
     time["%"] = (time["Papers"] / len(c) * 100).round(1)
     approach_x_time = pd.crosstab(c["Approach"], c["Time design"], margins=True, margins_name="Total")
-    method = v["Research Method"].value_counts().to_frame("Papers")
+    method = (c["Research method"].value_counts()
+              .reindex([m for m in config.RESEARCH_METHOD_ORDER if m in set(c["Research method"])])
+              .to_frame("Papers"))
+    method.index.name = "Research method"
+    method_x_approach = pd.crosstab(c["Research method"], c["Approach"]).reindex(method.index)
+    method_detail = c[["Reference", "Research method"]].join(v[["Research Method"]].rename(
+        columns={"Research Method": "Research method (as extracted)"}))
     collection = explode_count(v["Data Collection Method"],
                                lambda t: coding.tags(t, config.COLLECTION_TAGS)).to_frame("Papers")
 
@@ -38,27 +44,30 @@ def main():
     shared_data = (pd.DataFrame({"Dataset key": shared, "Reference": c.loc[shared.index, "Reference"]})
                    .sort_values("Dataset key"))
 
-    # Respondents
-    resp_long = v["Respondents"].map(lambda t: coding.tags(t, config.RESPONDENT_TAGS)).explode().dropna()
-    respondents = resp_long.value_counts().to_frame("Papers")
-    multi_level = c["Respondent types"].str.contains("Club members|Parents").sum()
-    respondents.loc["(Papers surveying individuals as well as clubs)"] = multi_level
-    resp_detail = v[["Respondents"]].join(c[["Reference", "Respondent types"]])
+    # Respondents (one fixed category per paper)
+    order = [r for r in config.RESPONDENT_ORDER if r in set(c["Respondent type"])]
+    respondents = c["Respondent type"].value_counts().reindex(order).to_frame("Papers")
+    respondents.index.name = "Respondent type"
+    resp_x_approach = pd.crosstab(c["Respondent type"], c["Approach"]).reindex(order)
+    resp_detail = c[["Reference", "Respondent type"]].join(v[["Respondents"]].rename(
+        columns={"Respondents": "Respondents (as extracted)"}))
 
     write_tables("02_study_design", {
         "Approach": approach, "Time design": time, "Approach x time": approach_x_time,
-        "Research method": method, "Data collection": collection,
+        "Research method": method, "Method x approach": method_x_approach,
+        "Method detail": method_detail, "Data collection": collection,
         "Sample sizes": ss, "Sample stats": sample_stats, "Sample bands": bands,
         "Shared datasets": shared_data,
-        "Respondents": respondents, "Respondent detail": resp_detail,
+        "Respondents": respondents, "Respondents x approach": resp_x_approach,
+        "Respondent detail": resp_detail,
     })
 
     stacked_bar(pd.crosstab(c["Time design"], c["Approach"])[
         [x for x in ["Quantitative", "Qualitative", "Mixed methods"] if x in set(c["Approach"])]],
         "Time design by approach", "02_design", colours=APPROACH_COLOURS)
     stacked_bar(bands, "Sample size (clubs or cases)", "02_sample_bands", colours=APPROACH_COLOURS)
-    hbar(respondents["Papers"].drop("(Papers surveying individuals as well as clubs)"),
-         "Who responded", "02_respondents", note="A paper can have several respondent types.")
+    hbar(respondents["Papers"], "Who responded", "02_respondents")
+    hbar(method["Papers"], "Research method", "02_research_method")
     hbar(collection["Papers"], "Data collection methods", "02_collection",
          note="A paper can use several methods.")
     print("02_study_design done")

@@ -117,6 +117,15 @@ def check_consistency(v, c):
             if nums and int(n) not in nums:
                 out.append(_issue(pid, "Final Club Sample Size", "Medium", "Sample size",
                                   f"Sheet value {int(n)} does not appear in Criteria 'Final sample: {m.group(1)[:120]}'."))
+        # fixed categories that could not be pinned down
+        rm = c.at[pid, "Research method"]
+        if rm in ("Case study (type not stated)", "Not classified"):
+            out.append(_issue(pid, "Research Method", "Medium", "Research method category",
+                              f"Classified as '{rm}' from '{rec['Research Method']}'. "
+                              "Edit the text (e.g. 'Case study (single)' or 'Case study (multiple)') to fix."))
+        if c.at[pid, "Respondent type"] == config.RESPONDENT_FALLBACK:
+            out.append(_issue(pid, "Respondents", "Info", "Respondent category",
+                              "Role of respondents not specified - check the paper for who completed the survey."))
         # design wording
         if c.at[pid, "Time design"] == "Not reported":
             out.append(_issue(pid, "Study Design", "High", "Design", f"Unrecognised design '{rec['Study Design']}'."))

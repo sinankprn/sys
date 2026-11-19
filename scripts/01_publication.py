@@ -44,8 +44,12 @@ def main():
     lead_country = (c.loc[~c["Multi-country"], "Countries"].value_counts().rename("Single-country papers").to_frame())
 
     # Sport
-    sport_counts = c["Sport category"].value_counts().to_frame("Papers")
-    sport_detail = v[["Sport Investigated"]].join(c[["Reference", "Sport category"]])
+    multisport = c["Multi-sport"].value_counts().to_frame("Papers")
+    multisport.index.name = "Multi-sport sample"
+    sports_long = c["Sports"].str.split("; ").explode()
+    sport_counts = sports_long.value_counts().to_frame("Papers")
+    sport_counts.index.name = "Sport"
+    sport_detail = c[["Reference", "Multi-sport", "Sports"]].join(v[["Sport Investigated"]])
 
     # Journal
     journal_counts = (c.reset_index().groupby("Journal")
@@ -54,12 +58,12 @@ def main():
                       .sort_values("Papers", ascending=False))
 
     write_tables("01_publication", {
-        "Papers": c[["Reference", "Year", "Journal", "N authors", "Countries", "Sport category"]],
+        "Papers": c[["Reference", "Year", "Journal", "N authors", "Countries", "Multi-sport", "Sports"]],
         "By year": by_year, "By period": by_period,
         "Authors": author_counts, "Team size": team_size,
         "Countries": country_counts, "Single vs multi": single_vs_multi,
         "Single-country papers": lead_country,
-        "Sports": sport_counts, "Sport detail": sport_detail,
+        "Multi-sport": multisport, "Sports": sport_counts, "Sport detail": sport_detail,
         "Journals": journal_counts,
     })
 
@@ -67,7 +71,9 @@ def main():
                 "Publications per year, by approach", "01_publications_by_year", colours=APPROACH_COLOURS)
     hbar(explode_count(v["Country"], coding.countries), "Countries studied", "01_countries",
          note="Multi-country papers count once for each country.")
-    hbar(sport_counts["Papers"], "Sport investigated", "01_sports")
+    hbar(sport_counts["Papers"], "Sports investigated", "01_sports",
+         note="'Not specified' = multi-sport samples that do not name the sports. A paper can name two sports.")
+    hbar(multisport["Papers"], "Multi-sport vs single-sport samples", "01_multisport")
     hbar(journal_counts["Papers"], "Journals", "01_journals")
     top = author_counts[author_counts["Papers"] > 1]["Papers"]
     if len(top):

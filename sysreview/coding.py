@@ -35,15 +35,47 @@ def world_region(country: str) -> str:
     return config.COUNTRY_REGION.get(country, "Europe")
 
 
-def sport_category(text) -> str:
+def is_multisport(text) -> str:
+    """'Yes' when the sample covers more than one sport (incl. two named sports)."""
     if pd.isna(text):
         return "Not reported"
-    t = str(text)
-    if t.lower().startswith("multi"):
-        return "Multi-sport"
-    t = re.sub(r"\([^)]*\)", "", t)          # drop parentheticals
-    t = re.sub(r"\s+", " ", t).strip()
-    return t[0].upper() + t[1:]
+    t = str(text).lower()
+    if t.startswith("multi") or ";" in sports_named(text):
+        return "Yes"
+    return "No"
+
+
+def sports_named(text) -> str:
+    """Named sports ('Football (soccer); Track and field'), else 'Not specified'."""
+    if pd.isna(text) or str(text).lower().startswith("multi"):
+        return "Not specified"
+    t = re.sub(r"(?i)football \(soccer[^)]*\)", "Football (soccer)", str(text))
+    t = re.sub(r"\((?!soccer\))[^)]*\)", "", t)   # drop other parentheticals
+    t = re.sub(r"(?i)track and field", "TRACK_FIELD", t)   # keep compound names whole
+    parts = [p.strip() for p in re.split(r"\band\b|,|;", t) if p.strip()]
+    return "; ".join((p[0].upper() + p[1:]).replace("TRACK_FIELD", "Track and field") for p in parts)
+
+
+def sport_category(text) -> str:
+    """Kept for older code: 'Multi-sport' or the single named sport."""
+    return "Multi-sport" if is_multisport(text) == "Yes" else sports_named(text)
+
+
+def _first_match(text, rules, fallback):
+    if pd.isna(text):
+        return "Not reported"
+    for name, pat in rules:
+        if re.search(pat, str(text), flags=re.I):
+            return name
+    return fallback
+
+
+def research_method(text) -> str:
+    return _first_match(text, config.RESEARCH_METHOD_CATEGORIES, "Not classified")
+
+
+def respondent_type(text) -> str:
+    return _first_match(text, config.RESPONDENT_CATEGORIES, config.RESPONDENT_FALLBACK)
 
 
 def approach(text) -> str:
@@ -134,16 +166,16 @@ def coded_table(values: pd.DataFrame) -> pd.DataFrame:
     df["Countries"] = values["Country"].map(lambda t: "; ".join(countries(t)))
     df["N countries"] = values["Country"].map(lambda t: len(countries(t)))
     df["Multi-country"] = df["N countries"] > 1
-    df["Sport category"] = values["Sport Investigated"].map(sport_category)
+    df["Multi-sport"] = values["Sport Investigated"].map(is_multisport)
+    df["Sports"] = values["Sport Investigated"].map(sports_named)
     df["Approach"] = values["Qualitative or Quantitative"].map(approach)
     df["Time design"] = values["Study Design"].map(time_design)
-    df["Research method"] = values["Research Method"]
+    df["Research method"] = values["Research Method"].map(research_method)
     df["Data collection"] = values["Data Collection Method"].map(
         lambda t: "; ".join(tags(t, config.COLLECTION_TAGS)))
     df["Sample size"] = pd.to_numeric(values["Final Club Sample Size"], errors="coerce").astype("Int64")
     df["Sample band"] = values["Final Club Sample Size"].map(sample_band)
-    df["Respondent types"] = values["Respondents"].map(
-        lambda t: "; ".join(tags(t, config.RESPONDENT_TAGS)))
+    df["Respondent type"] = values["Respondents"].map(respondent_type)
     for d in config.DIMENSIONS + ["External Influences"]:
         df[config.DIMENSION_SHORT[d]] = values[d].map(yes)
     df["N dimensions"] = df[[config.DIMENSION_SHORT[d] for d in config.DIMENSIONS]].sum(axis=1)

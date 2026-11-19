@@ -56,6 +56,20 @@ and those override the suggestions from then on. When one variable plays differe
 roles in different analyses of the same paper, record its role in the main analysis
 and note the other role.
 
+### Fixed categories in the Overview
+
+| Column | Categories |
+|---|---|
+| Multi-sport | Yes (sample covers more than one sport, including two named sports) / No |
+| Sports | Named sports separated by `;`, or **Not specified** |
+| Research method | Survey: single wave · Survey: repeated waves (panel) · Survey: clubs + members (multilevel) · Case study (single) · Case study (multiple) · Case study (type not stated) · Interviews · Focus groups · Mixed methods · Social network analysis |
+| Respondent type | Board members / club leaders · Club representatives (role not specified) · Club representatives + members (multi-level) · Multiple stakeholder groups |
+
+These are derived from the free text in Sheet1, which is kept alongside in the
+"... detail" tabs. To move a paper to another category, correct its text in the
+review workbook. To change the categories themselves, edit the rules in
+`sysreview/config.py`.
+
 How free text is grouped into categories (model families, respondent types,
 critical-element keywords, data-collection methods) is set in
 `sysreview/config.py`. To change a coding decision, edit it there.
