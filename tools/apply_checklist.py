@@ -68,8 +68,16 @@ def get_or_create(wb, title, headers):
 def main(checklist_path):
     checklist_path = Path(checklist_path)
     pid = int(re.search(r"paper_(\d+)", checklist_path.name).group(1))
-    ck = pd.read_excel(checklist_path, sheet_name="Checklist", dtype=str).fillna("")
+    sheets = pd.read_excel(checklist_path, sheet_name=None, dtype=str)
+    if "Checklist" in sheets:                      # older single-sheet format
+        ck = sheets["Checklist"].fillna("")
+        ind_ck = pd.DataFrame(columns=["Tag", "Your verdict", "Your note", "Page", "Status"])
+    else:                                          # sheets mirroring the spreadsheet tabs
+        ck = pd.concat([sheets["Overview"], sheets["Limitations"]], ignore_index=True).fillna("")
+        ind_ck = sheets["Indicators"].fillna("")
+        ind_ck = ind_ck[ind_ck["Tag"].str.match(r"^I-V\d+$")]
     ck["v"] = ck["Your verdict"].map(verdict)
+    ind_ck = ind_ck.assign(v=ind_ck["Your verdict"].map(verdict))
 
     wb = openpyxl.load_workbook(WORKBOOK)
     ov = wb["Overview"]
@@ -167,6 +175,48 @@ def main(checklist_path):
         else:
             follow_up.append(f"{tag}: agreed change could not be applied automatically ({r['Suggested']})")
 
+    # Indicators sheet: one row per variable; suggestions come from evidence/paper_XX_indicators.csv
+    if len(ind_ck):
+        sug = pd.read_csv(ROOT / "evidence" / f"paper_{pid:02d}_indicators.csv", dtype=str).fillna("")
+        sug = sug.set_index("Tag")
+        ws = wb["Indicators (quantitative)"]
+        prows = paper_rows(ws, pid)
+        for _, r in ind_ck.iterrows():
+            tag, v = r["Tag"], r["v"]
+            s_row = sug.loc[tag]
+            proposals = [(a, code, s_row["Suggested " + a.lower()]) for a, code in
+                         [("Role", "I3"), ("Dimension", "I4"), ("Definition", "I6"), ("Measure type", "I7")]
+                         if s_row["Suggested " + a.lower()]]
+            if not v:
+                follow_up.append(f"{tag}: no verdict")
+                continue
+            if v == "unsure":
+                follow_up.append(f"{tag}: unsure - {r['Your note']}")
+                continue
+            if not proposals:
+                if v == "disagree":
+                    follow_up.append(f"{tag}: you disagreed with a matching row - {r['Your note']}")
+                continue
+            rr = prows[int(tag.split("V")[1]) - 1]
+            name = ws.cell(rr, header_index(ws, "I5")).value
+            for attr, code, new in proposals:
+                col = header_index(ws, code)
+                old = ws.cell(rr, col).value
+                if v == "disagree":
+                    rejected += 1
+                    log.append([today, pid, reference_before, tag, ws.title, ws.cell(1, col).value, name,
+                                old, old, f"Kept (suggested: {new})", r["Your note"], r["Page"]])
+                elif new == "?":
+                    log.append([today, pid, reference_before, tag, ws.title, ws.cell(1, col).value, name,
+                                old, old, "Kept (decision: current value confirmed)", r["Your note"], r["Page"]])
+                    if r["Your note"].strip():
+                        follow_up.append(f"{tag} {attr}: check your note - {r['Your note']}")
+                else:
+                    accepted += 1
+                    ws.cell(rr, col).value = new
+                    log.append([today, pid, reference_before, tag, ws.title, ws.cell(1, col).value, name,
+                                old, new, "Changed", r["Your note"], r["Page"]])
+
     # Keep the Reference column in the other tabs in step with O2
     new_ref = ov.cell(row, ref_col).value
     if new_ref != reference_before:
@@ -180,7 +230,8 @@ def main(checklist_path):
     ver = get_or_create(wb, "Verification", VER_HEADERS)
     existing = [r for r in range(2, ver.max_row + 1) if str(ver.cell(r, 1).value) == str(pid)]
     open_items = "; ".join(follow_up)
-    values = [pid, new_ref, today, len(ck), int((ck["v"] == "agree").sum()), accepted, rejected,
+    values = [pid, new_ref, today, len(ck) + len(ind_ck),
+              int((ck["v"] == "agree").sum() + (ind_ck["v"] == "agree").sum()), accepted, rejected,
               open_items or "No open items", f"{checklist_path.parent.name}/{checklist_path.name}"]
     if existing:
         for c, val in enumerate(values, 1):

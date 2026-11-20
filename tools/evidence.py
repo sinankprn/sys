@@ -16,8 +16,14 @@ Input  evidence/paper_XX.csv, one row per piece of evidence:
     Location   where to look, e.g. "PDF p.6, Method" or "Table 2, PDF p.8"
     Reasoning  why, citing the CODEBOOK.md rule
 
+Optional input  evidence/paper_XX_indicators.csv, one row per variable (quantitative papers):
+    Tag, Indicator, Role, Suggested role, Dimension, Suggested dimension, Definition,
+    Suggested definition, Measure type, Suggested measure type, Status, Basis, Quote,
+    Location, Reasoning. A Suggested value of "?" marks an open question.
+
 Output
-    checklists/paper_XX_checklist.xlsx      one row per tag, with columns to tick off
+    checklists/paper_XX_checklist.xlsx      sheets mirroring the spreadsheet tabs (Overview,
+                                            Indicators with one row per variable, Limitations)
     evidence/paper_XX.md                    the same evidence as a readable table
     highlighted/paper_XX_highlighted.pdf    every quote highlighted in its category colour
                                             (plain = Stated, wavy underline = Inferred),
@@ -163,16 +169,135 @@ def place_tag(page, line_rect, used, bounds):
     return r
 
 
+IND_FIELDS = ["Tag", "Indicator", "Role", "Suggested role", "Dimension", "Suggested dimension",
+              "Definition", "Suggested definition", "Measure type", "Suggested measure type",
+              "Status", "Basis", "Quote", "Location", "Reasoning"]
+IND_ATTRS = [("Role", "I3"), ("Dimension", "I4"), ("Definition", "I6"), ("Measure type", "I7")]
+AMBER, RED = "FCE5B0", "F4C7C3"
+
+
+def shown(current, suggested):
+    """Cell text: the current value, or 'current → suggested' when a change is proposed."""
+    if not suggested:
+        return current
+    if suggested == "?":
+        return f"{current}  (?)"
+    return f"{current}  →  {suggested}"
+
+
+def indicator_items(ind, colours):
+    """Turn indicator rows into highlight items (one per variable)."""
+    rows = []
+    for _, r in ind.iterrows():
+        dim = r["Suggested dimension"] if r["Suggested dimension"] not in ("", "?") else r["Dimension"]
+        cat = dim if dim in colours else "Not capacity"
+        changes = [f"{a}: {shown(r[a], r['Suggested ' + a.lower()])}" for a, _ in IND_ATTRS
+                   if r["Suggested " + a.lower()]]
+        rows.append({"Tag": r["Tag"], "Section": "Indicators", "Field": r["Indicator"], "Category": cat,
+                     "Value": f"{r['Role']} | {r['Dimension']} | {r['Measure type']}",
+                     "Suggested": "; ".join(changes), "Status": r["Status"], "Basis": r["Basis"],
+                     "Quote": r["Quote"], "Location": r["Location"], "Reasoning": r["Reasoning"]})
+    return pd.DataFrame(rows, columns=FIELDS)
+
+
+def style_header(ws):
+    for c in ws[1]:
+        c.font = Font(bold=True, color="FFFFFF")
+        c.fill = PatternFill("solid", fgColor="1C5CAB")
+        c.alignment = Alignment(wrap_text=True, vertical="top")
+
+
+def add_dropdowns(ws, col_checked, col_verdict, first, last):
+    dv1 = DataValidation(type="list", formula1='"Yes,No"', allow_blank=True)
+    dv2 = DataValidation(type="list", formula1='"Yes,No,Unsure"', allow_blank=True)
+    ws.add_data_validation(dv1)
+    ws.add_data_validation(dv2)
+    dv1.add(f"{col_checked}{first}:{col_checked}{last}")
+    dv2.add(f"{col_verdict}{first}:{col_verdict}{last}")
+
+
+def simple_sheet(wb, title, rows, colours):
+    """Overview / Limitations sheet: one row per tag."""
+    ws = wb.create_sheet(title)
+    ws.append(["Tag", "Field", "In spreadsheet", "Suggested", "Status", "Basis", "Page",
+               "Quote from paper", "Reasoning", "Highlight checked", "Your verdict", "Your note"])
+    for _, r in rows.iterrows():
+        ws.append([r["Tag"], r["Field"], r["Value"], r["Suggested"], r["Status"], r["Basis"],
+                   r["Page"] or r["Quote check"], r["Quote"], r["Reasoning"], "", "", ""])
+        n = ws.max_row
+        ws.cell(n, 1).fill = PatternFill("solid", fgColor=hexcol(colours[r["Category"]]))
+        if r["Status"] in STATUS_FILL:
+            ws.cell(n, 5).fill = PatternFill("solid", fgColor=STATUS_FILL[r["Status"]])
+        if r["Suggested"]:
+            ws.cell(n, 4).fill = PatternFill("solid", fgColor=AMBER)
+        for c in ws[n]:
+            c.alignment = Alignment(wrap_text=True, vertical="top")
+    style_header(ws)
+    for col, wdt in zip("ABCDEFGHIJKL", [9, 22, 30, 30, 15, 9, 13, 50, 50, 11, 12, 30]):
+        ws.column_dimensions[col].width = wdt
+    add_dropdowns(ws, "J", "K", 2, max(ws.max_row, 2))
+    ws.freeze_panes = "C2"
+    ws.auto_filter.ref = f"A1:L{ws.max_row}"
+    return ws
+
+
+def indicator_sheet(wb, ind, shared, colours):
+    """One row per variable, mirroring the spreadsheet's Indicators tab."""
+    ws = wb.create_sheet("Indicators")
+    ws.append(["Tag", "I3 Role", "I4 Dimension", "I5 Indicator", "I6 Definition", "I7 Measure type",
+               "Status", "Page", "Quote from paper", "Reasoning", "Highlight checked", "Your verdict", "Your note"])
+    for _, r in ind.iterrows():
+        role, dim_c, defi, meas = [shown(r[a], r["Suggested " + a.lower()]) for a, _ in IND_ATTRS]
+        ws.append([r["Tag"], role, dim_c, r["Indicator"], defi, meas, r["Status"],
+                   r["Page"] or r["Quote check"], r["Quote"], r["Reasoning"], "", "", ""])
+        n = ws.max_row
+        dim = r["Suggested dimension"] if r["Suggested dimension"] not in ("", "?") else r["Dimension"]
+        ws.cell(n, 1).fill = PatternFill("solid", fgColor=hexcol(colours.get(dim, colours["Not capacity"])))
+        for a, col in [("Role", 2), ("Dimension", 3), ("Definition", 5), ("Measure type", 6)]:
+            sug = r["Suggested " + a.lower()]
+            if sug:
+                ws.cell(n, col).fill = PatternFill("solid", fgColor=RED if sug == "?" else AMBER)
+        if r["Status"] in STATUS_FILL:
+            ws.cell(n, 7).fill = PatternFill("solid", fgColor=STATUS_FILL[r["Status"]])
+        for c in ws[n]:
+            c.alignment = Alignment(wrap_text=True, vertical="top")
+    last_var = ws.max_row
+    style_header(ws)
+    if len(shared):
+        ws.append([])
+        ws.append(["Evidence that applies to several variables"])
+        ws.cell(ws.max_row, 1).font = Font(bold=True)
+        for _, r in shared.iterrows():
+            ws.append([r["Tag"], "", "", r["Field"], "", "", r["Status"], r["Page"] or r["Quote check"],
+                       r["Quote"], r["Reasoning"], "", "", ""])
+            n = ws.max_row
+            ws.cell(n, 1).fill = PatternFill("solid", fgColor=hexcol(colours[r["Category"]]))
+            for c in ws[n]:
+                c.alignment = Alignment(wrap_text=True, vertical="top")
+    for col, wdt in zip("ABCDEFGHIJKLM", [8, 24, 26, 26, 40, 20, 14, 13, 45, 45, 11, 12, 28]):
+        ws.column_dimensions[col].width = wdt
+    add_dropdowns(ws, "K", "L", 2, ws.max_row)
+    ws.freeze_panes = "B2"
+    ws.auto_filter.ref = f"A1:M{last_var}"
+    return ws
+
+
 def main(pdf_path, csv_path):
     pdf_path, csv_path = Path(pdf_path), Path(csv_path)
     ev = pd.read_csv(csv_path, dtype=str).fillna("")
     missing = [c for c in FIELDS if c not in ev.columns]
     if missing:
         sys.exit(f"{csv_path} is missing columns: {missing}")
-    if ev["Tag"].duplicated().any():
-        sys.exit(f"Duplicate tags: {sorted(ev.loc[ev['Tag'].duplicated(), 'Tag'])}")
     colours = load_colours()
-    unknown = sorted(set(ev["Category"]) - set(colours))
+    ind_path = csv_path.with_name(csv_path.stem + "_indicators.csv")
+    ind = pd.read_csv(ind_path, dtype=str).fillna("") if ind_path.exists() else pd.DataFrame(columns=IND_FIELDS)
+    missing = [c for c in IND_FIELDS if c not in ind.columns]
+    if missing:
+        sys.exit(f"{ind_path} is missing columns: {missing}")
+    items = pd.concat([ev, indicator_items(ind, colours)], ignore_index=True)
+    if items["Tag"].duplicated().any():
+        sys.exit(f"Duplicate tags: {sorted(items.loc[items['Tag'].duplicated(), 'Tag'])}")
+    unknown = sorted(set(items["Category"]) - set(colours))
     if unknown:
         sys.exit(f"Unknown Category values {unknown}. Use one of: {list(colours)}")
 
@@ -181,7 +306,7 @@ def main(pdf_path, csv_path):
         sys.exit("This PDF has no text layer (scanned image). Run OCR first, e.g. ocrmypdf.")
 
     found_pages, checks, used_tag_space = [], [], {}
-    for _, r in ev.iterrows():
+    for _, r in items.iterrows():
         basis = r["Basis"].strip().lower()
         if not r["Quote"].strip() or basis.startswith("not found"):
             found_pages.append("")
@@ -215,35 +340,39 @@ def main(pdf_path, csv_path):
             sq.update()
         tag_rect = place_tag(page, lines[0], used_tag_space.setdefault(pno, []), text_bounds(page))
         tag = page.add_freetext_annot(tag_rect, r["Tag"], fontsize=6.5, text_color=(0, 0, 0),
-                                      fill_color=colour,
-                                      align=1)
+                                      fill_color=colour, align=1)
         tag.set_info(title=info["title"])   # content would replace the tag text
         tag.update()
 
-    ev["Page"] = found_pages
-    ev["Quote check"] = checks
+    items["Page"] = found_pages
+    items["Quote check"] = checks
+    pages = dict(zip(items["Tag"], zip(items["Page"], items["Quote check"])))
+    ev["Page"] = [pages[t][0] for t in ev["Tag"]]
+    ev["Quote check"] = [pages[t][1] for t in ev["Tag"]]
+    ind["Page"] = [pages[t][0] for t in ind["Tag"]]
+    ind["Quote check"] = [pages[t][1] for t in ind["Tag"]]
 
     # ---- Legend + index page at the front of the highlighted PDF
     summary = doc.new_page(0)
     y = 40
     summary.insert_text((40, y), f"Evidence index: {pdf_path.name}", fontsize=12)
     y += 16
-    for txt in ["Each highlight has a tag in the margin (e.g. O12a) matching the checklist row.",
+    for txt in ["Each highlight has a tag in the margin (e.g. O12a, I-V3) matching a row in the checklist.",
                 "Colour = category. Plain highlight = Stated. Wavy underline = Inferred. "
                 "Click a highlight or tag for the reasoning.",
-                "Tag codes = spreadsheet columns (CODEBOOK.md). Page numbers below are PDF pages "
-                "of the original paper (this index page excluded)."]:
+                "Tag codes = spreadsheet columns (CODEBOOK.md). I-V = variable rows. Page numbers are "
+                "pages of the original paper (this index page excluded)."]:
         summary.insert_text((40, y), txt, fontsize=7.5)
         y += 10
     y += 4
-    used = [c for c in colours if c in set(ev["Category"])]
+    used = [c for c in colours if c in set(items["Category"])]
     for k, cat in enumerate(used):
         x = 40 + (k % 2) * 260
         yy = y + (k // 2) * 12
         summary.draw_rect(pymupdf.Rect(x, yy - 7, x + 18, yy + 2), color=None, fill=colours[cat])
         summary.insert_text((x + 24, yy), cat, fontsize=7.5)
     y += ((len(used) + 1) // 2) * 12 + 12
-    for _, r in ev.iterrows():
+    for _, r in items.iterrows():
         if y > 810:
             summary = doc.new_page(summary.number + 1)
             y = 40
@@ -257,57 +386,34 @@ def main(pdf_path, csv_path):
     out_pdf = HIGHLIGHT_DIR / (csv_path.stem + "_highlighted.pdf")
     doc.save(out_pdf, garbage=3, deflate=True)
 
-    # ---- Checklist workbook
+    # ---- Checklist workbook: one sheet per spreadsheet tab
     CHECKLIST_DIR.mkdir(exist_ok=True)
     out_xlsx = CHECKLIST_DIR / (csv_path.stem + "_checklist.xlsx")
     wb = Workbook()
-    ws = wb.active
-    ws.title = "Checklist"
-    hdr = ["Tag", "Field", "Category", "In spreadsheet", "Suggested", "Status", "Basis", "Page",
-           "Quote from paper", "Reasoning", "Highlight checked", "Your verdict", "Your note"]
-    ws.append(hdr)
-    for _, r in ev.iterrows():
-        ws.append([r["Tag"], r["Field"], r["Category"], r["Value"], r["Suggested"], r["Status"],
-                   r["Basis"], r["Page"] or r["Quote check"], r["Quote"], r["Reasoning"], "", "", ""])
-        row = ws.max_row
-        ws.cell(row, 1).fill = PatternFill("solid", fgColor=hexcol(colours[r["Category"]]))
-        ws.cell(row, 3).fill = PatternFill("solid", fgColor=hexcol(colours[r["Category"]]))
-        if r["Status"] in STATUS_FILL:
-            ws.cell(row, 6).fill = PatternFill("solid", fgColor=STATUS_FILL[r["Status"]])
-        for c in ws[row]:
-            c.alignment = Alignment(wrap_text=True, vertical="top")
-    for c in ws[1]:
-        c.font = Font(bold=True, color="FFFFFF")
-        c.fill = PatternFill("solid", fgColor="1C5CAB")
-        c.alignment = Alignment(wrap_text=True, vertical="top")
-    for col, wdt in zip("ABCDEFGHIJKLM", [8, 20, 18, 28, 28, 15, 9, 7, 50, 50, 11, 14, 30]):
-        ws.column_dimensions[col].width = wdt
-    n = ws.max_row
-    dv1 = DataValidation(type="list", formula1='"Yes,No"', allow_blank=True)
-    dv2 = DataValidation(type="list", formula1='"Yes,No,Unsure"', allow_blank=True)
-    ws.add_data_validation(dv1)
-    ws.add_data_validation(dv2)
-    dv1.add(f"K2:K{n}")
-    dv2.add(f"L2:L{n}")
-    ws.freeze_panes = "C2"
-    ws.auto_filter.ref = f"A1:M{n}"
-    guide = wb.create_sheet("How to use")
+    guide = wb.active
+    guide.title = "How to use"
     for i, line in enumerate([
         f"Checklist for {pdf_path.name}",
         "",
-        "1. Open the highlighted PDF (highlighted folder) next to this sheet.",
-        "2. For each row, find the tag in the PDF margin (e.g. O12a). Page = PDF page of the original paper.",
-        "3. Read the highlighted text in context. 'Highlight checked' = Yes once you've looked at it.",
-        "4. 'Your verdict': Yes = you agree (with the Suggested value, if there is one; otherwise with the value).",
-        "   No = you disagree; say why or what it should be in 'Your note'. Unsure = discuss.",
-        "5. Rows with Status 'Suggest change' or 'Decision needed' are the ones that change the data.",
-        "   When done, send the file back; tools/apply_checklist.py writes agreed changes and logs everything.",
-        "6. Tags start with the spreadsheet column code (O = Overview, I = Indicators, L = Limitations).",
-        "   Definitions and rules for each code are in CODEBOOK.md; colours in HIGHLIGHT_COLOURS.md.",
+        "The sheets mirror organised_extraction.xlsx: Overview, Indicators, Limitations.",
+        "1. Open the highlighted PDF (highlighted folder) next to this file.",
+        "2. For each row, find its tag in the PDF margin (e.g. O12a, I-V3) and read the highlighted text in context.",
+        "   Set 'Highlight checked' to Yes once you've looked at it.",
+        "3. Proposed changes appear in the cell itself: 'current  →  suggested' (amber).",
+        "   A red cell marked '(?)' is an open question: answer it in 'Your note'.",
+        "4. 'Your verdict': Yes = agree with the row (the suggested values if there are any, otherwise the current ones).",
+        "   No = disagree; say why or what it should be in 'Your note'. Unsure = discuss.",
+        "5. Indicators: one row per variable, with the spreadsheet's columns in the same order (I3 Role, I4 Dimension,",
+        "   I5 Indicator, I6 Definition, I7 Measure type). One verdict covers the whole row.",
+        "6. When done, save it to sinanverification/ and send it back: agreed changes are applied and logged.",
+        "Column codes and rules: CODEBOOK.md. Colours: HIGHLIGHT_COLOURS.md.",
     ], 1):
         guide.cell(i, 1, line)
     guide["A1"].font = Font(bold=True, size=13)
-    guide.column_dimensions["A"].width = 110
+    guide.column_dimensions["A"].width = 115
+    simple_sheet(wb, "Overview", ev[ev["Section"] == "Overview"], colours)
+    indicator_sheet(wb, ind, ev[ev["Section"] == "Indicators"], colours)
+    simple_sheet(wb, "Limitations", ev[ev["Section"].str.startswith("Limitations")], colours)
     wb.save(out_xlsx)
 
     # ---- Markdown evidence table
@@ -326,12 +432,21 @@ def main(pdf_path, csv_path):
             md.append(f"| {r['Tag']} | {cell(r['Field'])} | {cell(r['Value'])} | {cell(r['Suggested'])} | "
                       f"{r['Status']} | {r['Basis']} | {q} | {r['Page'] or r['Quote check']} | {cell(r['Reasoning'])} |")
         md.append("")
+    if len(ind):
+        md += ["## Indicators (one row per variable)", "",
+               "| Tag | I3 Role | I4 Dimension | I5 Indicator | I6 Definition | I7 Measure type | Status | Quote from paper | Page | Reasoning |",
+               "|---|---|---|---|---|---|---|---|---|---|"]
+        for _, r in ind.iterrows():
+            c = [cell(shown(r[a], r["Suggested " + a.lower()])) for a, _ in IND_ATTRS]
+            md.append(f"| {r['Tag']} | {c[0]} | {c[1]} | {cell(r['Indicator'])} | {c[2]} | {c[3]} | {r['Status']} | "
+                      f"“{cell(r['Quote'])}” | {r['Page'] or r['Quote check']} | {cell(r['Reasoning'])} |")
+        md.append("")
     out_md = csv_path.with_suffix(".md")
     out_md.write_text("\n".join(md), encoding="utf-8")
 
-    bad = (ev["Quote check"] == "NOT FOUND").sum()
-    print(f"{len(ev)} items, {(ev['Quote check'] == 'Highlighted').sum()} highlighted, {bad} quotes not found; "
-          f"{(ev['Status'] != 'Matches').sum()} need a decision")
+    bad = (items["Quote check"] == "NOT FOUND").sum()
+    print(f"{len(items)} items, {(items['Quote check'] == 'Highlighted').sum()} highlighted, {bad} quotes not found; "
+          f"{(items['Status'] != 'Matches').sum()} need a decision")
     print(f"-> {out_xlsx}\n-> {out_md}\n-> {out_pdf}")
     return bad
 

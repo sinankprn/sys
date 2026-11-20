@@ -160,10 +160,16 @@ Each checked paper has three linked outputs:
 - an **evidence table** (`evidence/paper_XX.md`)
 - a **highlighted PDF** (`highlighted/paper_XX_highlighted.pdf`)
 
-Every item has a **tag**: the column code, plus a letter when one column has more
+The checklist has one sheet per spreadsheet tab. On the **Indicators** sheet each
+variable is one row (tag `I-V1`, `I-V2`, …) with the spreadsheet's columns in the
+same order: I3 Role, I4 Dimension, I5 Indicator, I6 Definition, I7 Measure type. A
+proposed change appears in the cell as `current → suggested`. Evidence that applies
+to several variables at once is tagged `I-S1`, `I-S2`, …
+
+Every other item has a **tag**: the column code, plus a letter when one column has more
 than one piece of evidence. For example, `O12a` and `O12b` are two quotes for Data
 collection. Limitation and future-research points are tagged `L5-Lim1`, `L5-FR2`,
-and so on; variables are tagged `I-V1`, `I-V2`, and so on. The tag is printed beside
+and so on. A `+` marks a point that is missing and suggested for adding (e.g. `L5-FR3+`). The tag is printed beside
 the highlight in the PDF.
 
 | Basis | Meaning |
