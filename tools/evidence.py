@@ -177,6 +177,25 @@ AMBER, RED = "FCE5B0", "F4C7C3"
 ROLES = ["Outcome (DV)", "Predictor (IV)", "Control", "Measured only"]   # CODEBOOK.md I3, in this order
 
 
+ROLE_DEFINITIONS = [   # keep in step with CODEBOOK.md section 3.1
+    ["Outcome (DV)", "The variable an analysis tries to explain, predict or compare: the result the authors are interested in.",
+     "Called dependent variable, outcome, explained variable. One model per outcome. In a group comparison "
+     "(ANOVA, t-test, chi-square, Mann-Whitney) it is the measure compared across the groups.",
+     "Paper 2: management capacity compared across club-size groups."],
+    ["Predictor (IV)", "A variable used to explain the outcome, whose effect the authors interpret.",
+     "Called independent variable, predictor, explanatory variable, determinant. Linked to a hypothesis. "
+     "In a group comparison it is the variable that defines the groups.",
+     "Paper 2: club size (the four size groups in the ANOVA)."],
+    ["Control", "Included only to adjust for differences between clubs or to match groups; its effect is not interpreted.",
+     "Called control variable or covariate; 'controlling for', 'to account for'. Often listed last in tables. "
+     "Includes matching variables.",
+     "Community size, region dummies, sport type, survey year."],
+    ["Measured only", "Measured and reported, but with no direction in the analysis.",
+     "Descriptive statistics, correlations, inputs to a factor analysis or scale development (EFA/CFA).",
+     "Paper 2: the 16 scales in the factor analysis and correlations."],
+]
+
+
 def role_problems(value: str) -> str:
     """'' if the value is valid: allowed roles, separated by '; ', in ROLES order, no repeats."""
     if value in ("", "?"):
@@ -423,11 +442,25 @@ def main(pdf_path, csv_path):
         "5. Indicators: one row per variable, with the spreadsheet's columns in the same order (I3 Role, I4 Dimension,",
         "   I5 Indicator, I6 Definition, I7 Measure type). One verdict covers the whole row.",
         "6. When done, save it to sinanverification/ and send it back: agreed changes are applied and logged.",
+        "The 'Role definitions' sheet explains the four roles used in I3 Role.",
         "Column codes and rules: CODEBOOK.md. Colours: HIGHLIGHT_COLOURS.md.",
     ], 1):
         guide.cell(i, 1, line)
     guide["A1"].font = Font(bold=True, size=13)
     guide.column_dimensions["A"].width = 115
+    rd = wb.create_sheet("Role definitions")
+    rd.append(["Role (I3)", "Definition", "How to recognise it", "Example"])
+    for row in ROLE_DEFINITIONS:
+        rd.append(row)
+    style_header(rd)
+    for col, wdt in zip("ABCD", [18, 50, 60, 50]):
+        rd.column_dimensions[col].width = wdt
+    for r_ in rd.iter_rows(min_row=2):
+        for c in r_:
+            c.alignment = Alignment(wrap_text=True, vertical="top")
+    rd.append([])
+    rd.append(['Several roles: one per analysis, separated by "; " in this order: '
+               "Outcome (DV); Predictor (IV); Control; Measured only. Full rules: CODEBOOK.md section 3.1."])
     simple_sheet(wb, "Overview", ev[ev["Section"] == "Overview"], colours)
     indicator_sheet(wb, ind, ev[ev["Section"] == "Indicators"], colours)
     simple_sheet(wb, "Limitations", ev[ev["Section"].str.startswith("Limitations")], colours)
