@@ -1,5 +1,8 @@
 # Findings and insights: organisational capacity in community sport clubs
 
+> Figures reflect verification decisions up to paper 2 (e.g. paper 2's *ambition* scales
+> are coded "Other", not capacity). They will shift as more papers are checked.
+
 Based on `organised_extraction.xlsx` (30 papers, 481 quantitative variables, 254
 limitation and future-research points). Counts that come from the archived raw
 extraction (authors, data sources, qualitative themes) are marked *(archive)*.
@@ -10,7 +13,7 @@ them as approximate.
 
 ## Headline insights
 
-1. **Capacity is mostly studied as a cause, rarely as an effect.** 245 of the 310
+1. **Capacity is mostly studied as a cause, rarely as an effect.** 245 of the 302
    capacity variables are predictors. Capacity is an outcome in only four papers.
    Three of them only compare groups or time points (papers 2, 7 and 26: ANOVA,
    t-tests, Mann-Whitney), and just one models what drives capacity (paper 17,
@@ -32,8 +35,8 @@ them as approximate.
    examined in 3 of 14 papers up to 2018, but in 12 of 16 papers since 2019.
    COVID-19, policy and the wider environment explain much of this rise.
 7. **Capacity is measured with simple indicators, not validated scales.** About
-   half of the capacity variables are binary dummies (28%) or single
-   Likert/rating items (23%). Only three papers (2, 4, 29) develop multi-item scales.
+   half of the capacity variables are binary dummies (29%) or single
+   Likert/rating items (21%). Only three papers (2, 4, 29) develop multi-item scales.
 
 ---
 
@@ -92,7 +95,7 @@ them as approximate.
 
 - **Human resources is universal; relationships and networks get the least
   attention.** 19 papers cover all five dimensions. Relationship and network
-  capacity is the least examined dimension and has the fewest variables (33).
+  capacity is the least examined dimension and has the fewest variables (32).
   Only paper 30 studies networks directly.
 - **Attention is not the same as measurement depth.** Human resources is examined
   most, but infrastructure has as many predictor variables (76 vs 74), mostly
@@ -108,11 +111,11 @@ them as approximate.
   8, 14 and 18 treat it as a separate "cultural capacity" block. Under the codebook
   (CODEBOOK.md §1.1), these variables belong to Infrastructure and Process, which
   would make that dimension even more heavily measured.
-- **How capacity was measured (310 capacity variables)**: binary/dummy 28%,
-  Likert or rating items 23%, ratios/percentages/shares 17%, categorical bands 6%,
-  counts/amounts 6%, composite indices 1%. 17% have no measurement detail recorded.
+- **How capacity was measured (302 capacity variables)**: binary/dummy 29%,
+  Likert or rating items 21%, ratios/percentages/shares 18%, categorical bands 6%,
+  counts/amounts 6%, composite indices 1%. 18% have no measurement detail recorded.
 - **Capacity's role in the analysis** (a variable can have several roles, one per
-  analysis): predictor 245, outcome 60 (papers 2, 7, 17, 26), measured only 5.
+  analysis): predictor 245, outcome 52 (papers 2, 7, 17, 26), measured only 13.
   See headline 1.
 
 **Critical elements (Doherty et al., 2014)**
