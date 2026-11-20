@@ -284,7 +284,7 @@ def main(pdf_path, csv_path):
         ws.column_dimensions[col].width = wdt
     n = ws.max_row
     dv1 = DataValidation(type="list", formula1='"Yes,No"', allow_blank=True)
-    dv2 = DataValidation(type="list", formula1='"Agree,Disagree,Unsure"', allow_blank=True)
+    dv2 = DataValidation(type="list", formula1='"Yes,No,Unsure"', allow_blank=True)
     ws.add_data_validation(dv1)
     ws.add_data_validation(dv2)
     dv1.add(f"K2:K{n}")
@@ -298,9 +298,10 @@ def main(pdf_path, csv_path):
         "1. Open the highlighted PDF (highlighted folder) next to this sheet.",
         "2. For each row, find the tag in the PDF margin (e.g. O12a). Page = PDF page of the original paper.",
         "3. Read the highlighted text in context. 'Highlight checked' = Yes once you've looked at it.",
-        "4. 'Your verdict': Agree = the value (or the Suggested value, if any) is right.",
-        "   Disagree = it isn't; write what it should be in 'Your note'. Unsure = discuss.",
+        "4. 'Your verdict': Yes = you agree (with the Suggested value, if there is one; otherwise with the value).",
+        "   No = you disagree; say why or what it should be in 'Your note'. Unsure = discuss.",
         "5. Rows with Status 'Suggest change' or 'Decision needed' are the ones that change the data.",
+        "   When done, send the file back; tools/apply_checklist.py writes agreed changes and logs everything.",
         "6. Tags start with the spreadsheet column code (O = Overview, I = Indicators, L = Limitations).",
         "   Definitions and rules for each code are in CODEBOOK.md; colours in HIGHLIGHT_COLOURS.md.",
     ], 1):

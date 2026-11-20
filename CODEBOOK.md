@@ -58,9 +58,15 @@ maintain its capacities depends on them.
 | **Access to resources** | Financial resources, human resources and technology available to the organisation. These are affected by the environmental factors | Availability of public funding programmes, of volunteers in the community, of public facilities; support, resources or withdrawal of an **external agent** |
 | **Historical factors** | Past behaviours, activities and effectiveness (e.g. fundraising practices, ethical or unethical conduct, abuses of trust, perceived contributions), and norms and values (e.g. an ethos that attracts or discourages people or funders) | Club age and tradition, past partnerships and their legacy, earlier scandals or successes, sporting traditions in a country |
 
-**O20 rule:** TRUE if the paper measures, analyses or reports findings on **at least
-one factor of any of the three types**. A mention only in the introduction or
-literature review is FALSE.
+**O20 rule:** TRUE only if the paper's **data are segmented into external
+influences**. That means it measures external factors as variables (e.g. "problems
+with demographic development", "competition from commercial providers", policy or
+COVID-19 measures), or it codes and reports findings under an external-influence
+category (environmental constraints and facilitators, access to resources,
+historical factors). A study whose topic or context involves an outside actor or
+event is **not** enough on its own. For example, paper 1 studies an external agent's
+withdrawal, but codes all its findings into the five capacities, so O20 is FALSE.
+Mentions in the introduction or literature review are FALSE.
 
 ### 1.3 Outputs and outcomes (right of the model)
 
@@ -108,7 +114,7 @@ review is FALSE.
 | O8 | Sports | Sports separated by `; `, or `Not specified` | Every sport the paper names. `Not specified` when multi-sport but the sports aren't named. |
 | O9 | Approach | Quantitative / Qualitative / Mixed methods | As the paper describes its design. Mixed methods requires both strands to be analysed. |
 | O10 | Time design | Cross-sectional / Longitudinal / Both | **Longitudinal** only when the same units are measured at two or more time points. Retrospective accounts collected once, and one wave of a panel, are cross-sectional. |
-| O11 | Research method | Survey: single wave · Survey: repeated waves (panel) · Survey: clubs + members (multilevel) · Case study (single) · Case study (multiple) · Interviews · Focus groups · Mixed methods · Social network analysis | **(proposed)** A case study of one case (one event, programme, agent or organisation) is *single*, even if data come from several clubs. Two or more cases compared is *multiple*. |
+| O11 | Research method | Survey: single wave · Survey: repeated waves (panel) · Survey: clubs + members (multilevel) · Case study · Interviews · Focus groups · Mixed methods · Social network analysis | Case studies are not split into single and multiple. |
 | O12 | Data collection | Online survey · Paper survey · Telephone survey · Survey (mode unspecified) · Interviews · Focus groups · Observation · Documents / secondary data, separated by `; ` | Every method used to collect data that is analysed in the paper. |
 | O13 | Club sample size | Number | Clubs or organisations in the final analysed sample. For case studies, the number of clubs studied. |
 | O14 | Participant sample size | Number or blank | People who provided data (interviewees, focus-group participants, individual respondents such as members). Blank when one representative answered per club. |
@@ -140,7 +146,7 @@ review is FALSE.
 |---|---|---|---|
 | L1 | ID | Paper ID | |
 | L2 | Reference | As O2 | |
-| L3 | Type | Limitation / Future research | A **limitation** is a weakness the authors acknowledge. **Future research** is a direction they explicitly recommend. A limitation is not repeated as future research unless the authors also make it a recommendation. |
+| L3 | Type | Limitation / Future research | A **limitation** is a weakness the authors acknowledge. **Future research** is a direction they recommend, including when it's phrased as a gap that needs attention (e.g. "an area in need of attention"). One sentence can therefore give both a limitation row and a future-research row. |
 | L4 | No. | 1, 2, … | Order within paper and type. |
 | L5 | Point | Paraphrase in UK English | One idea per row. |
 | L6 | Note | Text or blank | Where the points came from if the paper has no dedicated section. |
@@ -187,3 +193,6 @@ it finds exactly, so a paraphrase is flagged ✗. Colours are in
 | 2026-11-20 | O4 | Year = print issue year | User's edits to papers 1 and 2 |
 | 2026-11-20 | O17 | Organisational culture belongs to Infrastructure and Process ("processes and culture") | Hall et al. (2003) |
 | 2026-11-20 | All | Column codes O1–O22, I1–I8, L1–L6 added to spreadsheet headers | User |
+| 2026-11-20 | O11 | Case studies are recorded as "Case study", with no single/multiple split. Papers 10, 12, 13 and 20 re-coded to match | Paper 1 checklist (O11) |
+| 2026-11-20 | O20 | External = TRUE only when the data are segmented into external influences (measured as variables or coded as categories). A topic involving an outside actor is not enough | Paper 1 checklist (O20a–c) |
+| 2026-11-20 | L3 | A gap described as needing attention counts as a future-research suggestion, even when it is also a limitation | Paper 1 checklist (L5-FR2) |
