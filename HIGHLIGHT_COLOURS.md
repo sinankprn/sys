@@ -11,8 +11,12 @@ evidence table has a **Category** matching a name in the first column.
 - **Highlight with a dark wavy underline:** *Inferred*. A judgement; click it to read the reasoning and codebook rule.
 - *Not found* has no highlight. It appears on the summary page only.
 
-Clicking any highlight shows the field, the value in the spreadsheet, the basis and
-the reasoning. The first page of every highlighted PDF repeats this legend and lists
+Each highlight also has a **tag** in the page margin, in the same colour (e.g. `O12a`).
+The tag is the spreadsheet column code from CODEBOOK.md, and it matches a row in the
+paper's checklist (`checklists/paper_XX_checklist.xlsx`).
+
+Clicking any highlight or tag shows the field, the value in the spreadsheet, any
+suggested value, the status, the basis and the reasoning. The first page of every highlighted PDF repeats this legend and lists
 every field with its page.
 
 | Category | Colour | Hex | Use for |

@@ -1,60 +1,82 @@
 # Codebook
 
 What every column in `organised_extraction.xlsx` means, the values it can take, and
-the rule for deciding a value. Every paper check cites these rules by number
-(e.g. "Codebook O-15"). If a paper raises a case the rules don't cover, decide it,
-add the rule here, and log it under [Decisions log](#decisions-log).
+the rule for deciding a value.
 
-Rules marked **(proposed)** are suggestions that still need your confirmation.
+**Column codes.** Every column header in the spreadsheet starts with a code:
+**O** = Overview tab, **I** = Indicators (quantitative) tab, **L** = Limitations &
+future research tab. For example, `O15 HR` is column 15 of the Overview. The same
+code is used here, in each paper's checklist, and on the tag beside each highlight
+in the PDFs.
+
+Rules marked **(proposed)** still need your confirmation. If a paper raises a case
+the rules don't cover, decide it, add the rule here, and log it under
+[Decisions log](#decisions-log).
 
 ---
 
-## 1. Framework: Hall et al. (2003) organisational capacity
+## 1. Framework: Hall et al. (2003)
 
-All capacity coding follows Hall et al.'s (2003) conceptual framework of
-organisational capacity. The framework has three parts:
+All capacity coding follows the conceptual model of nonprofit and voluntary
+organisational capacity in Hall et al. (2003). The model has three parts:
 
-| Part of the model | Position in figure | Used for |
+| Part | Position in Hall's figure | Spreadsheet columns |
 |---|---|---|
-| **Capacity dimensions** | Middle (inside the oval) | The five capacity columns (O-15 to O-19) and the Dimension column for indicators |
-| **External factors** | Left | The External column (O-20) and external indicators |
-| **Outputs and outcomes** | Right | Outcome variables that are results of capacity, not capacity itself |
+| **External influences** | Left | O20 External |
+| **Organisational capacities** | Middle | O15 HR, O16 Financial, O17 Infrastructure, O18 Planning, O19 Relationships |
+| **Outputs and outcomes** | Right | No Overview column. Used to classify outcome variables (I4) |
 
-### 1.1 Capacity dimensions (middle)
+Hall et al. define capacity as an organisation's ability to fulfil its mission by
+drawing on three types of capital:
+- **financial capital**
+- **human capital**, the people or "thinking part" of the organisation
+- **structural capital**, what remains "when the people from an organization have gone home"
 
-| Dimension | Hall et al. (2003) content | Examples in community sport clubs |
+Structural capacity has three sub-types: relationship and network, infrastructure
+and process, and planning and development. Human capital is "the key element that
+leads to the development of all other capacities".
+
+### 1.1 Organisational capacities (O15–O19)
+
+| Code | Column | Hall et al. (2003) definition | Includes, in community sport clubs | Boundary rules |
+|---|---|---|---|---|
+| **O15** | HR | **Human Resources Capacity**: the ability to deploy human capital (paid staff and volunteers) within the organisation, and the competencies, knowledge, attitudes, motivation and behaviours of these people | Number and share of volunteers and paid staff; board, coaches, officials; skills, qualifications and training; enthusiasm, commitment, common focus; recruitment, retention and succession problems | Members as *participants* are not HR (club size is "Not capacity"); members as *volunteers* are HR |
+| **O16** | Financial | **Financial Capacity**: the ability to develop and deploy financial capital, i.e. revenues, expenses, assets and liabilities | Revenue amount and sources, diversification, membership fees, subsidies **received**, sponsorship income, expenses, reserves and assets, debt, breaking even, financial problems | Whether outside funding *exists or is available* in the environment is External (access to resources). The club's own revenue from it is Financial |
+| **O17** | Infrastructure | **Infrastructure and Process Capacity** (structural): the ability to deploy or rely on infrastructure, processes **and culture**, products related to internal structure or day-to-day operations (e.g. databases, manuals, policies and procedures), information technology and intellectual property | Facilities (own, public, availability, condition); formalisation, policies and procedures, defined roles; internal communication; IT and digitalisation; **organisational culture and values** | Culture always belongs here, not in a separate dimension. A *policy document or plan for the future* is Planning (O18); day-to-day *procedures* are Infrastructure |
+| **O18** | Planning | **Planning and Development Capacity** (structural): the ability to develop and draw on organisational strategic plans, programme plans and designs (including fundraising and volunteer management), policies and proposals | Strategic or long-term plans, plan implementation, programme design and new offers, development concepts, volunteer-management or fundraising plans, creativity, readiness to build capacity | Having *programmes* is an output (right of the model). *Planning or designing* them is Planning |
+| **O19** | Relationships | **Relationship and Network Capacity** (structural): the ability to draw on relationships with clients, members, funders, partners, government, the media, corporations, volunteers and the public | Cooperation and partnerships with schools, municipalities, federations, other clubs, companies and sponsors; relationship quality (balanced, dependable, personal); network ties | The *relationship* is Relationships. Changes in the wider environment that partners belong to, e.g. government policy, are External (O20) |
+
+### 1.2 External influences (O20)
+
+Hall et al.: "three main types of external factors that can affect the performance
+of nonprofit and voluntary organizations". An organisation's ability to develop or
+maintain its capacities depends on them.
+
+| Type | Hall et al. (2003) definition | Includes, in community sport clubs |
 |---|---|---|
-| **Human Resources Capacity** | Competence: core competencies, knowledge, skills, talents, know-how. Hall places it at the centre because it drives the other four | Volunteers, paid staff, board, coaches; their numbers, skills, training, enthusiasm, succession, retention |
-| **Financial Capacity** | Expenses, revenues, assets, liabilities | Revenue sources and diversification, membership fees, subsidies, sponsorship, breaking even, reserves, financial problems |
-| **Infrastructure and Process Capacity** | Infrastructure, processes **and culture**; products related to the internal structure or day-to-day operations (e.g. databases, manuals); information technology | Facilities (own or public, availability, condition), formalisation, policies, communication, IT and digitalisation, **organisational culture** |
-| **Planning and Development Capacity** | Planning, research and development (e.g. strategic planning about mission, services and products, programme design, proposals) | Strategic and long-term plans, plan implementation, creativity, new programmes, readiness to develop |
-| **Relationship and Network Capacity** | Relationships with clients, members, funders, collaborators, donors, suppliers, customers | Partnerships and cooperation with schools, municipalities, federations, sponsors, other clubs; quality of those relationships |
+| **Environmental constraints and facilitators** | The political environment, public policy, the legal and regulatory framework, public trust and confidence in nonprofit institutions, societal values, societal needs, the demographic composition of the population, and competition among nonprofits, businesses and government. These are interdependent | Government and federation policy, bureaucracy and regulation, COVID-19 restrictions, demographic change, competition from commercial providers or other clubs, community size or urbanisation as context, economic conditions |
+| **Access to resources** | Financial resources, human resources and technology available to the organisation. These are affected by the environmental factors | Availability of public funding programmes, of volunteers in the community, of public facilities; support, resources or withdrawal of an **external agent** |
+| **Historical factors** | Past behaviours, activities and effectiveness (e.g. fundraising practices, ethical or unethical conduct, abuses of trust, perceived contributions), and norms and values (e.g. an ethos that attracts or discourages people or funders) | Club age and tradition, past partnerships and their legacy, earlier scandals or successes, sporting traditions in a country |
 
-Organisational culture belongs to **Infrastructure and Process Capacity**.
-Hall et al. list "processes and culture" in that box, so culture is not a separate
-dimension.
+**O20 rule:** TRUE if the paper measures, analyses or reports findings on **at least
+one factor of any of the three types**. A mention only in the introduction or
+literature review is FALSE.
 
-### 1.2 External factors (left)
+### 1.3 Outputs and outcomes (right of the model)
 
-| Group | Hall et al. (2003) content | Examples in community sport clubs |
-|---|---|---|
-| **Environmental constraints and facilitators** | Economy, political environment, public policy, legal/regulatory, public trust, societal values, societal needs, demographics, competition with nonprofits, businesses and government, physical environment | Demographic change, competition from commercial providers or other clubs, government policy and bureaucracy, COVID-19 restrictions, community size, region |
-| **Access to resources** | Human resources, technology, capital, information, public support (brand equity) | Availability of external funding or volunteers in the community, access to public facilities, support from an external agent |
-| **Historical factors** | Past behaviour, activity and effectiveness; norms and values | Club age, tradition, past partnerships and their legacy |
-
-### 1.3 Outputs and outcomes (right)
-
-Services provided, populations served, goods produced, advocacy, policy influenced,
-changes in behaviour. In clubs these include programme offers, membership growth,
-social integration, health promotion, and inclusion of specific groups. These are
-**results** of capacity, not capacity itself.
+What the organisation produces and the results it intends. Hall et al.:
+"outputs are secondary to the intended outcome of those outputs". In clubs these
+include sport programmes and services offered, populations served (e.g. youth,
+women, people with disabilities, people in poverty), membership development,
+social integration, health effects, and advocacy. These are **results** of capacity,
+not capacity. They are used only to classify outcome variables (I4).
 
 ### 1.4 Critical elements (Doherty, Misener & Cuskelly, 2014)
 
-Doherty et al. (2014) break each of Hall's five dimensions into critical elements
+Doherty et al. (2014) break each of Hall's five capacities into critical elements
 for community sport clubs:
 
-| Dimension | Critical elements |
+| Capacity | Critical elements |
 |---|---|
 | Human Resources | Human capital, common focus, enthusiasm, volunteer succession, sufficient volunteers, volunteer continuity, development and support |
 | Financial | Stable revenues, alternative sources of revenue, stable expenses, fiscal responsibility |
@@ -62,64 +84,81 @@ for community sport clubs:
 | Planning and Development | Strategic planning, creativity, plan implementation |
 | Relationship and Network | Engagement with partners, bureaucratic partners, balanced relationships, dependable relationships, personal connection |
 
+### 1.5 Rule for the capacity columns (O15–O19)
+
+**(proposed)** TRUE if the paper measures, analyses or reports findings on at least
+one element of that capacity (§1.1) as a variable or qualitative theme, whatever the
+paper calls it. Classify by Hall's definitions, not the authors' labels. For example,
+"cultural capacity" counts as O17. A mention only in the introduction or literature
+review is FALSE.
+
 ---
 
 ## 2. Overview tab (one row per paper)
 
-| # | Column | Values | Rule |
+| Code | Column | Values | Rule |
 |---|---|---|---|
-| O-1 | ID | 1–30 | Fixed paper number. Never reused. |
-| O-2 | Reference | `Surname & Surname (Year)` or `Surname et al. (Year)` | Use full surnames as printed, including compound ones (e.g. *Alonso Restrepo*). The year must equal the Year column. |
-| O-3 | DOI | `https://doi.org/…` | As printed on the paper. |
-| O-4 | Year | yyyy | **Print issue year.** If the paper appeared online first in an earlier year, note that in the evidence table. |
-| O-5 | Journal | Full journal title | Title case, as on the journal's website. |
-| O-6 | Countries | Country names separated by `; ` | Every country where data were collected. England, Scotland and Wales are listed separately when the paper does. |
-| O-7 | Multi-sport | Yes / No | **Yes** if the sample covers more than one sport (including two named sports). **No** for a single sport. |
-| O-8 | Sports | Sports separated by `; `, or `Not specified` | Name every sport the paper names. Use `Not specified` when the sample is multi-sport but the sports are not named. |
-| O-9 | Approach | Quantitative / Qualitative / Mixed methods | As the paper describes its design. Mixed methods requires both strands to be analysed. |
-| O-10 | Time design | Cross-sectional / Longitudinal / Both | **Longitudinal** only when the same units are measured at two or more time points. Retrospective accounts collected once are **cross-sectional**. One wave of a panel is cross-sectional. |
-| O-11 | Research method | Survey: single wave · Survey: repeated waves (panel) · Survey: clubs + members (multilevel) · Case study (single) · Case study (multiple) · Interviews · Focus groups · Mixed methods · Social network analysis | **(proposed)** A case study with one case (one event, programme or organisation) is *single*, even if data come from several clubs. Two or more cases compared is *multiple*. |
-| O-12 | Data collection | Online survey · Paper survey · Telephone survey · Survey (mode unspecified) · Interviews · Focus groups · Observation · Documents / secondary data, separated by `; ` | Every method used to collect data analysed in the paper. |
-| O-13 | Club sample size | Number | Number of clubs or organisations in the final analysed sample. For case studies, the number of clubs studied. |
-| O-14 | Participant sample size | Number or blank | Number of people who provided data (interviewees, focus-group participants, individual survey respondents such as members). Leave blank when the unit is the club and one representative answered per club. |
-| O-15 | HR | TRUE / FALSE | **(proposed)** TRUE if the paper measures, analyses or reports findings on at least one element of this dimension (§1.1) as a variable or theme. A mention in the literature review alone is FALSE. |
-| O-16 | Financial | TRUE / FALSE | As O-15. |
-| O-17 | Infrastructure | TRUE / FALSE | As O-15. Organisational culture counts here (§1.1). |
-| O-18 | Planning | TRUE / FALSE | As O-15. |
-| O-19 | Relationships | TRUE / FALSE | As O-15. |
-| O-20 | External | TRUE / FALSE | TRUE if the paper measures, analyses or reports findings on **any factor on the left of Hall's model** (§1.2): environmental constraints or facilitators, access to resources, or historical factors. This includes external agents, policy, COVID-19, demographics and competition. |
-| O-21 | Critical elements used | Yes / Partly / No | **Yes**: data are coded or measured using Doherty et al.'s (2014) critical elements across the dimensions. **Partly**: some elements are used or adapted, or cited to justify specific variables. **No**: not used. |
-| O-22 | Model families | Families separated by `; `, or blank | Statistical models used for the main analyses: Linear regression (OLS), Multilevel / mixed-effects, Logistic regression, Probit regression, Ordered logit, Fractional logit, Quantile regression, ANOVA / t-test, Non-parametric tests, Correlation / bivariate tests, Factor analysis (EFA/CFA), Social network analysis (QAP), Descriptive statistics. Blank for qualitative papers. |
+| O1 | ID | 1–30 | Fixed paper number. Never reused. |
+| O2 | Reference | `Surname & Surname (Year)` or `Surname et al. (Year)` | Full surnames as printed, including compound ones (e.g. *Alonso Restrepo*). The year must equal O4. |
+| O3 | DOI | `https://doi.org/…` | As printed on the paper. |
+| O4 | Year | yyyy | **Print issue year.** If the paper appeared online first in an earlier year, note that in the evidence. |
+| O5 | Journal | Full journal title | As on the journal's website. |
+| O6 | Countries | Country names separated by `; ` | Every country where data were collected. England, Scotland and Wales are listed separately when the paper does. |
+| O7 | Multi-sport | Yes / No | **Yes** if the sample covers more than one sport (including two named sports). **No** for a single sport. |
+| O8 | Sports | Sports separated by `; `, or `Not specified` | Every sport the paper names. `Not specified` when multi-sport but the sports aren't named. |
+| O9 | Approach | Quantitative / Qualitative / Mixed methods | As the paper describes its design. Mixed methods requires both strands to be analysed. |
+| O10 | Time design | Cross-sectional / Longitudinal / Both | **Longitudinal** only when the same units are measured at two or more time points. Retrospective accounts collected once, and one wave of a panel, are cross-sectional. |
+| O11 | Research method | Survey: single wave · Survey: repeated waves (panel) · Survey: clubs + members (multilevel) · Case study (single) · Case study (multiple) · Interviews · Focus groups · Mixed methods · Social network analysis | **(proposed)** A case study of one case (one event, programme, agent or organisation) is *single*, even if data come from several clubs. Two or more cases compared is *multiple*. |
+| O12 | Data collection | Online survey · Paper survey · Telephone survey · Survey (mode unspecified) · Interviews · Focus groups · Observation · Documents / secondary data, separated by `; ` | Every method used to collect data that is analysed in the paper. |
+| O13 | Club sample size | Number | Clubs or organisations in the final analysed sample. For case studies, the number of clubs studied. |
+| O14 | Participant sample size | Number or blank | People who provided data (interviewees, focus-group participants, individual respondents such as members). Blank when one representative answered per club. |
+| O15–O19 | HR, Financial, Infrastructure, Planning, Relationships | TRUE / FALSE | See §1.1 and §1.5. |
+| O20 | External | TRUE / FALSE | See §1.2. |
+| O21 | Critical elements used | Yes / Partly / No | **Yes**: data are coded or measured using Doherty et al.'s (2014) critical elements across the capacities. **Partly**: some elements are used or adapted, or cited to justify specific variables. **No**: not used. |
+| O22 | Model families | Families separated by `; `, or blank | Statistical models used for the main analyses: Linear regression (OLS), Multilevel / mixed-effects, Logistic regression, Probit regression, Ordered logit, Fractional logit, Quantile regression, ANOVA / t-test, Non-parametric tests, Correlation / bivariate tests, Factor analysis (EFA/CFA), Social network analysis (QAP), Descriptive statistics. Blank for qualitative papers. |
 
 ---
 
 ## 3. Indicators (quantitative) tab (one row per variable)
 
-| # | Column | Values | Rule |
+| Code | Column | Values | Rule |
 |---|---|---|---|
-| I-1 | ID | Paper ID | |
-| I-2 | Reference | As O-2 | |
-| I-3 | Role | Outcome (DV) · Predictor (IV) · Control · Moderator / interaction · Matching variable · Grouping variable · Compared variable · Associated variable · Scale item / factor · Measured only · Unclear | Role in the paper's **main** analysis. Models with an outcome: Outcome / Predictor / Control. Group comparisons (ANOVA, t-test, chi-square, Mann-Whitney): Grouping / Compared. Correlations: Associated. Factor analysis: Scale item. Descriptive: Measured only. |
-| I-4 | Dimension | One of the five capacity dimensions (§1.1) · **External** (§1.2) · **Outputs and outcomes** (§1.3) · **Not capacity** (e.g. club size, sport type, year dummies) | **(proposed)** Classify by Hall's model rather than by the paper's own labels. Culture goes to Infrastructure and Process. Contextual factors such as community size, region, competition and demographic problems go to External. The current `Other: …` and `Not grouped` labels should be re-coded into these categories. |
-| I-5 | Indicator | Variable name as used in the paper | Keep the paper's name (including codes such as `PROB_FIN`). |
-| I-6 | Definition | Text or blank | What the variable captures, in the paper's words where possible, without scale or statistics. Leave blank if the paper gives no definition. |
-| I-7 | Measure type | Binary / dummy · Likert / rating scale · Ratio / percentage / share · Count / amount · Categorical / ordinal bands · Composite index / factor · Network ties · Not stated | How the variable is scored in the analysis. |
-| I-8 | Text | Original extraction text | Kept for reference. Do not edit. |
+| I1 | ID | Paper ID | |
+| I2 | Reference | As O2 | |
+| I3 | Role | Outcome (DV) · Predictor (IV) · Control · Moderator / interaction · Matching variable · Grouping variable · Compared variable · Associated variable · Scale item / factor · Measured only · Unclear | Role in the paper's **main** analysis. Models with an outcome: Outcome / Predictor / Control. Group comparisons: Grouping / Compared. Correlations: Associated. Factor analysis: Scale item. Descriptive: Measured only. |
+| I4 | Dimension | Human Resources Capacity · Financial Capacity · Infrastructure and Process Capacity · Planning and Development Capacity · Relationship and Network Capacity · **External** · **Outputs and outcomes** · **Not capacity** | **(proposed)** Classify by Hall's model (§1), not by the paper's labels. Culture → Infrastructure and Process. Community size, region, competition, demographic or policy problems → External. Programme offers, members served, social functions → Outputs and outcomes. Club size, sport type, year dummies → Not capacity. The current `Other: …` and `Not grouped` labels should be re-coded into these. |
+| I5 | Indicator | Variable name as used in the paper | Keep the paper's name (including codes such as `PROB_FIN`). |
+| I6 | Definition | Text or blank | What the variable captures, in the paper's words where possible, without scale or statistics. Blank if the paper gives no definition. |
+| I7 | Measure type | Binary / dummy · Likert / rating scale · Ratio / percentage / share · Count / amount · Categorical / ordinal bands · Composite index / factor · Network ties · Not stated | How the variable is scored in the analysis. |
+| I8 | Text | Original extraction text | Kept for reference. Do not edit. |
 
 ---
 
 ## 4. Limitations & future research tab (one row per point)
 
-| # | Column | Values | Rule |
+| Code | Column | Values | Rule |
 |---|---|---|---|
-| L-1 | Type | Limitation / Future research | A **limitation** is a weakness the authors acknowledge. **Future research** is a direction they explicitly recommend. A limitation is not repeated as future research unless the authors also make it a recommendation. |
-| L-2 | No. | 1, 2, … | Order within paper and type. |
-| L-3 | Point | Paraphrase in UK English | One idea per row. |
-| L-4 | Note | Text or blank | Where the points came from if the paper has no dedicated section. |
+| L1 | ID | Paper ID | |
+| L2 | Reference | As O2 | |
+| L3 | Type | Limitation / Future research | A **limitation** is a weakness the authors acknowledge. **Future research** is a direction they explicitly recommend. A limitation is not repeated as future research unless the authors also make it a recommendation. |
+| L4 | No. | 1, 2, … | Order within paper and type. |
+| L5 | Point | Paraphrase in UK English | One idea per row. |
+| L6 | Note | Text or blank | Where the points came from if the paper has no dedicated section. |
 
 ---
 
-## 5. Evidence rules for paper checks
+## 5. Paper checks
+
+Each checked paper has three linked outputs:
+- a **checklist** (`checklists/paper_XX_checklist.xlsx`)
+- an **evidence table** (`evidence/paper_XX.md`)
+- a **highlighted PDF** (`highlighted/paper_XX_highlighted.pdf`)
+
+Every item has a **tag**: the column code, plus a letter when one column has more
+than one piece of evidence. For example, `O12a` and `O12b` are two quotes for Data
+collection. Limitation and future-research points are tagged `L5-Lim1`, `L5-FR2`,
+and so on; variables are tagged `I-V1`, `I-V2`, and so on. The tag is printed beside
+the highlight in the PDF.
 
 | Basis | Meaning |
 |---|---|
@@ -127,9 +166,15 @@ for community sport clubs:
 | **Inferred** | A judgement applying a codebook rule. The reasoning names the rule. |
 | **Not found** | The paper doesn't report it. The reasoning lists the sections searched. |
 
-Every quote must be copied word for word from the PDF. The highlighter only marks
-quotes it finds exactly, so a paraphrase is flagged ✗. Highlight colours are listed
-in [HIGHLIGHT_COLOURS.md](HIGHLIGHT_COLOURS.md).
+| Status | Meaning |
+|---|---|
+| **Matches** | The paper supports the value in the spreadsheet. |
+| **Suggest change** | The paper or a codebook rule points to a different value (shown under Suggested). |
+| **Decision needed** | The rules don't settle it. Decide, then add a rule to this codebook. |
+
+Every quote is copied word for word from the PDF. The highlighter only marks quotes
+it finds exactly, so a paraphrase is flagged ✗. Colours are in
+[HIGHLIGHT_COLOURS.md](HIGHLIGHT_COLOURS.md).
 
 ---
 
@@ -137,6 +182,8 @@ in [HIGHLIGHT_COLOURS.md](HIGHLIGHT_COLOURS.md).
 
 | Date | Rule | Decision | Prompted by |
 |---|---|---|---|
-| 2026-11-20 | §1 | Capacity dimensions follow Hall et al. (2003), middle of the model. External = anything on the left of the model | User |
-| 2026-11-20 | O-4 | Year = print issue year | User's edits to papers 1 and 2 |
-| 2026-11-20 | §1.1 | Organisational culture belongs to Infrastructure and Process Capacity (Hall's "processes and culture") | Hall et al. (2003) figure |
+| 2026-11-20 | §1 | Capacity columns follow Hall et al. (2003), the middle of the model. External = the three types of external influences on the left | User |
+| 2026-11-20 | §1.1, §1.2 | Definitions taken from Hall et al. (2003), pp. 5–7 | User (Hall et al. text) |
+| 2026-11-20 | O4 | Year = print issue year | User's edits to papers 1 and 2 |
+| 2026-11-20 | O17 | Organisational culture belongs to Infrastructure and Process ("processes and culture") | Hall et al. (2003) |
+| 2026-11-20 | All | Column codes O1–O22, I1–I8, L1–L6 added to spreadsheet headers | User |
