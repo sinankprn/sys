@@ -174,6 +174,7 @@ IND_FIELDS = ["Tag", "Indicator", "Role", "Suggested role", "Dimension", "Sugges
               "Status", "Basis", "Quote", "Location", "Reasoning"]
 IND_ATTRS = [("Role", "I3"), ("Dimension", "I4"), ("Definition", "I6"), ("Measure type", "I7")]
 AMBER, RED = "FCE5B0", "F4C7C3"
+ROLES = ["Outcome (DV)", "Predictor (IV)", "Control", "Grouping variable", "Compared variable", "Measured only"]
 
 
 def shown(current, suggested):
@@ -294,6 +295,9 @@ def main(pdf_path, csv_path):
     missing = [c for c in IND_FIELDS if c not in ind.columns]
     if missing:
         sys.exit(f"{ind_path} is missing columns: {missing}")
+    bad_roles = sorted({v for v in list(ind["Role"]) + list(ind["Suggested role"]) if v not in ROLES + ["", "?"]})
+    if bad_roles:
+        sys.exit(f"Roles not allowed by CODEBOOK.md I3: {bad_roles}. Use one of: {ROLES}")
     items = pd.concat([ev, indicator_items(ind, colours)], ignore_index=True)
     if items["Tag"].duplicated().any():
         sys.exit(f"Duplicate tags: {sorted(items.loc[items['Tag'].duplicated(), 'Tag'])}")
