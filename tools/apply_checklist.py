@@ -51,6 +51,12 @@ def header_index(ws, code: str) -> int:
     raise KeyError(f"No column with code {code} in {ws.title}")
 
 
+def paper_rows(ws, pid):
+    """Row numbers of a paper's rows in a long tab, in sheet order."""
+    idc = header_index(ws, ws.cell(1, 1).value.split(" ")[0])
+    return [r for r in range(2, ws.max_row + 1) if str(ws.cell(r, idc).value) == str(pid)]
+
+
 def get_or_create(wb, title, headers):
     if title in wb.sheetnames:
         return wb[title]
@@ -103,6 +109,11 @@ def main(checklist_path):
             log.append([today, pid, reference_before, tag, sheet, col_name, r["Field"], r["In spreadsheet"],
                         r["In spreadsheet"], f"Kept (suggested: {r['Suggested']})", r["Your note"], r["Page"]])
             continue
+        # Agreed. With no Suggested value, "Yes" means keep the current value.
+        if not r["Suggested"].strip():
+            log.append([today, pid, reference_before, tag, sheet, col_name, r["Field"], r["In spreadsheet"],
+                        r["In spreadsheet"], "Kept (decision: current value confirmed)", r["Your note"], r["Page"]])
+            continue
         # Agreed: write the suggested value
         if code.startswith("O"):
             col = header_index(ov, code)
@@ -113,8 +124,48 @@ def main(checklist_path):
             accepted += 1
             log.append([today, pid, reference_before, tag, "Overview", ov.cell(1, col).value, r["Field"],
                         old, new, "Changed", r["Your note"], r["Page"]])
+        elif (mi := re.match(r"^(I\d+)-V(\d+)(?:-(\d+))?$", tag)):
+            # Indicators: column I<n> for variable(s) V<a>[-<b>] of this paper (row order in the tab)
+            ws = wb["Indicators (quantitative)"]
+            col = header_index(ws, mi.group(1))
+            rows = paper_rows(ws, pid)
+            a, b = int(mi.group(2)), int(mi.group(3) or mi.group(2))
+            for v_no in range(a, b + 1):
+                rr = rows[v_no - 1]
+                old = ws.cell(rr, col).value
+                ws.cell(rr, col).value = r["Suggested"]
+                log.append([today, pid, reference_before, f"{tag} (V{v_no})", ws.title, ws.cell(1, col).value,
+                            ws.cell(rr, header_index(ws, "I5")).value, old, r["Suggested"], "Changed",
+                            r["Your note"], r["Page"]])
+            accepted += 1
+        elif (ml := re.match(r"^L5-(Lim|FR)(\d+)(\+?)$", tag)):
+            ws = wb["Limitations & future research"]
+            kind = "Limitation" if ml.group(1) == "Lim" else "Future research"
+            n = int(ml.group(2))
+            if ml.group(3) == "+":            # add a new point, directly under the paper's other rows
+                prows = paper_rows(ws, pid)
+                at = (prows[-1] + 1) if prows else ws.max_row + 1
+                ws.insert_rows(at)
+                for c, val in enumerate([pid, ov.cell(row, ref_col).value, kind, n, r["Suggested"], None], 1):
+                    ws.cell(at, c).value = val
+                log.append([today, pid, reference_before, tag, ws.title, "L5 Point", f"{kind} {n}",
+                            "(no row)", r["Suggested"], "Added", r["Your note"], r["Page"]])
+            else:
+                rr = next(x for x in paper_rows(ws, pid)
+                          if ws.cell(x, header_index(ws, "L3")).value == kind
+                          and str(ws.cell(x, header_index(ws, "L4")).value) == str(n))
+                old = ws.cell(rr, header_index(ws, "L5")).value
+                if r["Suggested"].lower().startswith("delete"):
+                    ws.delete_rows(rr)
+                    log.append([today, pid, reference_before, tag, ws.title, "L5 Point", f"{kind} {n}",
+                                old, "(row deleted)", "Deleted", r["Your note"], r["Page"]])
+                else:
+                    ws.cell(rr, header_index(ws, "L5")).value = r["Suggested"]
+                    log.append([today, pid, reference_before, tag, ws.title, "L5 Point", f"{kind} {n}",
+                                old, r["Suggested"], "Changed", r["Your note"], r["Page"]])
+            accepted += 1
         else:
-            follow_up.append(f"{tag}: agreed change to {sheet} must be applied by hand ({r['Suggested']})")
+            follow_up.append(f"{tag}: agreed change could not be applied automatically ({r['Suggested']})")
 
     # Keep the Reference column in the other tabs in step with O2
     new_ref = ov.cell(row, ref_col).value
