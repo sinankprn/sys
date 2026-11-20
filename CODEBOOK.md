@@ -56,10 +56,13 @@ maintain its capacities depends on them.
 |---|---|---|
 | **Environmental constraints and facilitators** | The political environment, public policy, the legal and regulatory framework, public trust and confidence in nonprofit institutions, societal values, societal needs, the demographic composition of the population, and competition among nonprofits, businesses and government. These are interdependent | Government and federation policy, bureaucracy and regulation, COVID-19 restrictions, demographic change, competition from commercial providers or other clubs, community size or urbanisation as context, economic conditions |
 | **Access to resources** | Financial resources, human resources and technology available to the organisation. These are affected by the environmental factors | Availability of public funding programmes, of volunteers in the community, of public facilities; support, resources or withdrawal of an **external agent** |
-| **Historical factors** | Past behaviours, activities and effectiveness (e.g. fundraising practices, ethical or unethical conduct, abuses of trust, perceived contributions), and norms and values (e.g. an ethos that attracts or discourages people or funders) | Club age and tradition, past partnerships and their legacy, earlier scandals or successes, sporting traditions in a country |
+| **Historical factors** | Past behaviours, activities and effectiveness (e.g. fundraising practices, ethical or unethical conduct, abuses of trust, perceived contributions), and norms and values (e.g. an ethos that attracts or discourages people or funders) | Tradition and past effectiveness, past partnerships and their legacy, earlier scandals or successes, sporting traditions in a country. (Club age itself is a structural trait: Not capacity, see I4.) |
 
 **O20 rule:** TRUE only if the paper's **data are segmented into external
-influences**. That means it measures external factors as variables (e.g. "problems
+influences**, i.e. external factors are assessed in its models or analysis, as the
+authors assign them. A variable the authors place in a capacity dimension counts
+there, not here (paper 3: urbanisation is the authors' "external relationships"
+variable, so it counts as Relationships and O20 is FALSE). That means it measures external factors as variables (e.g. "problems
 with demographic development", "competition from commercial providers", policy or
 COVID-19 measures), or it codes and reports findings under an external-influence
 category (environmental constraints and facilitators, access to resources,
@@ -94,9 +97,11 @@ for community sport clubs:
 
 **(proposed)** TRUE if the paper measures, analyses or reports findings on at least
 one element of that capacity (§1.1) as a variable or qualitative theme, whatever the
-paper calls it. Classify by Hall's definitions, not the authors' labels. For example,
-"cultural capacity" counts as O17. A mention only in the introduction or literature
-review is FALSE.
+paper calls it. **When the authors assign a capacity variable to a Hall dimension,
+follow the authors' assignment** (paper 3: urbanisation → Relationships, because the
+authors mean external relationships). When they use a label outside Hall's five, map it
+by Hall's definitions; for example, "cultural capacity" counts as O17. A mention only in
+the introduction or literature review is FALSE.
 
 ---
 
@@ -120,7 +125,7 @@ review is FALSE.
 | O14 | Participant sample size | Number or blank | People who provided data (interviewees, focus-group participants, individual respondents such as members). Blank when one representative answered per club. |
 | O15–O19 | HR, Financial, Infrastructure, Planning, Relationships | TRUE / FALSE | See §1.1 and §1.5. |
 | O20 | External | TRUE / FALSE | See §1.2. |
-| O21 | Critical elements used | Yes / Partly / No | **Yes**: data are coded or measured using Doherty et al.'s (2014) critical elements across the capacities. **Partly**: some elements are used or adapted, or cited to justify specific variables. **No**: not used. |
+| O21 | Critical elements used | Yes / Partly / No | **Yes**: the analysis codes or measures data with Doherty et al.'s (2014) critical elements across the capacities. **Partly**: the analysis codes or measures some of the critical elements. **No**: the critical elements are not used in the analysis. Citing Doherty et al. (2014) to justify a variable is **not** enough for Partly (paper 3). |
 | O22 | Model families | Families separated by `; `, or blank | Statistical models used for the main analyses: Linear regression (OLS), Multilevel / mixed-effects, Logistic regression, Probit regression, Ordered logit, Fractional logit, Quantile regression, ANOVA / t-test, Non-parametric tests, Correlation / bivariate tests, Factor analysis (EFA/CFA), Social network analysis (QAP), Descriptive statistics. Blank for qualitative papers. |
 
 ---
@@ -132,7 +137,7 @@ review is FALSE.
 | I1 | ID | Paper ID | |
 | I2 | Reference | As O2 | |
 | I3 | Role | Outcome (DV) · Predictor (IV) · Control · Measured only. Several roles separated by `; `, in that order | See [§3.1 Role definitions](#31-role-definitions-i3). |
-| I4 | Dimension | Human Resources Capacity · Financial Capacity · Infrastructure and Process Capacity · Planning and Development Capacity · Relationship and Network Capacity · **External** · **Outputs and outcomes** · **Other** · **Not capacity** | Classify by Hall's model (§1). Culture → Infrastructure and Process. Community size, region, competition, demographic or policy problems → External. Programme offers, members served, social functions → Outputs and outcomes. **Other**: a construct the authors created that is not a Hall capacity, even if it is organised by Hall's dimensions (e.g. paper 2's *organisational ambition* scales). Club size, sport type, year dummies → Not capacity. **(proposed)** The remaining `Other: …` and `Not grouped` labels are re-coded into these values as each paper is checked. |
+| I4 | Dimension | Human Resources Capacity · Financial Capacity · Infrastructure and Process Capacity · Planning and Development Capacity · Relationship and Network Capacity · **External** · **Outputs and outcomes** · **Other** · **Not capacity** | **Capacity variables:** follow the authors' assignment to a Hall dimension (paper 3: urbanisation, labelled 'external relationships' → Relationship and Network). If the authors use a label outside Hall's five, map it by Hall's definitions (culture → Infrastructure and Process). **External:** environmental, resource-access or historical factors the authors treat as external. **Outputs and outcomes:** results the clubs produce or experience, including outcome constructs such as perceived need for change, service innovation (e.g. 'sport light') and membership growth (paper 3). **Other:** a construct the authors created that is not capacity, even if organised by Hall's dimensions (paper 2's *organisational ambition* scales). **Not capacity:** structural traits and design variables: club size, sport type (uni-/multi-sport), club age, survey wave or time. **(proposed)** The remaining `Other: …` and `Not grouped` labels are re-coded as each paper is checked. |
 | I5 | Indicator | Variable name as used in the paper | Keep the paper's name (including codes such as `PROB_FIN`). |
 | I6 | Definition | Text or blank | What the variable captures, in the paper's words where possible, without scale or statistics. Blank if the paper gives no definition. |
 | I7 | Measure type | Binary / dummy · Likert / rating scale · Ratio / percentage / share · Count / amount · Categorical / ordinal bands · Composite index / factor · Network ties · Not stated | How the variable is scored in the analysis. |
@@ -226,4 +231,7 @@ it finds exactly, so a paraphrase is flagged ✗. Colours are in
 | 2026-11-20 | I3 | Roles reduced to 4; a variable takes one role per analysis it appears in, separated by "; ". Compared variable → Outcome (DV) (59 variables, papers 2, 7, 26); Grouping variable → Predictor (IV) (6 variables, papers 2, 7, 27) | Paper 2 (EFA + ANOVA + correlations on the same variables) |
 | 2026-11-20 | I3 | Definitions of the 4 roles written in §3.1 | User |
 | 2026-11-20 | I4 | "Other" added for constructs the authors created that are not Hall capacities. Paper 2's 8 *ambition* scales re-coded from their capacity dimension to Other; external orientation capacity kept as Relationship and Network | Paper 2 checklist (I-V2–16 notes) |
+| 2026-11-20 | O19, O20, I4 | Follow the authors' assignment of a capacity variable to a Hall dimension: paper 3's urbanisation ('external relationships') = Relationship and Network, so O19 TRUE and O20 FALSE. External only when external factors are assessed in the models | Paper 3 checklist (O19, O20, I-V13) |
+| 2026-11-20 | I4 | Outcome constructs (need for change, sport light, membership growth) = Outputs and outcomes. Structural traits (size, type, age, time) = Not capacity; club age removed from the Historical factors examples | Paper 3 checklist (I-V1–3, I-V14–17) |
+| 2026-11-20 | O21 | Partly requires critical elements to be used in the analysis; citing Doherty et al. (2014) to justify a variable is not enough | Paper 3 checklist (O21a–b) |
 | 2026-11-20 | L3 | A gap described as needing attention counts as a future-research suggestion, even when it is also a limitation | Paper 1 checklist (L5-FR2) |

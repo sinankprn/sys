@@ -35,6 +35,8 @@ Checklist: `checklists/paper_03_checklist.xlsx`. Highlighted copy: `highlighted/
 |---|---|---|---|---|---|---|---|---|
 | I-S1 | The three dependent variables are also predictors in each other's models (supports Role for I-V1–3) |  |  | Matches | Stated | “all three variables are also included as independent variables” | 12 | Need for change, sport light and organisational growth are each an outcome in one model and a predictor in the other two. |
 | I-S2 | The authors' own grouping into six 'OC dimensions' (context for I4 decisions) |  |  | Matches | Stated | “namely human resources, finances, infrastructure, planning and development, external relationships and structural characteristics” | 4 | The authors add a sixth 'structural' dimension (size, type, age) and put urbanisation under external relationships. The codebook classifies by Hall instead (I4). |
+| I-S3 | Table 3: need for change is a predictor in the sport light and growth models (supports Predictor for I-V1) |  |  | Matches | Stated | “Need for change – – – 0.22 0.06 3.57” | 15 | The row shows coefficients in LMM2 (sport light, t = 3.57) and GLMM3 (growth); dashes = its own model. Added after your double-check request. |
+| I-S4 | Table 3: sport light is a predictor in the need-for-change and growth models (supports Predictor for I-V2) |  |  | Matches | Stated | “Sport light 0.05 0.02 3.34” | 15 | Coefficient in LMM1 (need for change, t = 3.34) and GLMM3. Organisational growth's rows (Decrease / Unchanged) appear as predictors in LMM1 and LMM2 just below. |
 
 ## Limitations & future research
 
