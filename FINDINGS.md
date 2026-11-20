@@ -1,6 +1,6 @@
 # Findings and insights: organisational capacity in community sport clubs
 
-> Figures reflect verification decisions up to paper 2 (e.g. paper 2's *ambition* scales
+> Figures reflect verification decisions up to paper 4 (e.g. paper 2's *ambition* scales
 > are coded "Other", not capacity). They will shift as more papers are checked.
 
 Based on `organised_extraction.xlsx` (30 papers, 481 quantitative variables, 254
@@ -115,7 +115,7 @@ them as approximate.
   Likert or rating items 21%, ratios/percentages/shares 18%, categorical bands 6%,
   counts/amounts 6%, composite indices 1%. 18% have no measurement detail recorded.
 - **Capacity's role in the analysis** (a variable can have several roles, one per
-  analysis): predictor 245, outcome 52 (papers 2, 7, 17, 26), measured only 13.
+  analysis): predictor 245, outcome 52 (papers 2, 7, 17, 26), measured only 36.
   See headline 1.
 
 **Critical elements (Doherty et al., 2014)**
