@@ -38,16 +38,19 @@ def norm_token(t: str) -> str:
     t = unicodedata.normalize("NFKC", t).lower()
     t = t.replace("’", "'").replace("‘", "'").replace("“", '"').replace("”", '"')
     t = t.replace("–", "-").replace("—", "-").replace("−", "-")
-    return re.sub(r"[^\w%€$.,\-+=<>/]", "", t).strip(".,;:")
+    # Hyphens are dropped so "self-" + "empowerment" across a line break matches "self-empowerment"
+    return re.sub(r"[^\w%€$.,+=<>/]", "", t).strip(".,;:")
 
 
 def page_words(page):
     """Words on a page in reading order, re-joining words hyphenated across lines."""
-    words = page.get_text("words", sort=True)   # x0, y0, x1, y1, word, block, line, wno
+    # Natural (stored) order follows the text flow, so two-column pages read
+    # column by column; sort=True would interleave the columns line by line.
+    words = page.get_text("words")   # x0, y0, x1, y1, word, block, line, wno
     out = []
     for w in words:
         rect, text = pymupdf.Rect(w[:4]), w[4]
-        if out and out[-1][0].endswith("-") and (w[5], w[6]) != out[-1][2]:
+        if out and out[-1][0].endswith(("-", "\u00ad")) and (w[5], w[6]) != out[-1][2]:
             prev_text, prev_rects, _ = out[-1]
             out[-1] = (prev_text[:-1] + text, prev_rects + [rect], (w[5], w[6]))
         else:
