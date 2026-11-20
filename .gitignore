@@ -5,4 +5,4 @@ __pycache__/
 
 # Papers are copyrighted and this repo is public: keep PDFs local only
 papers/*.pdf
-evidence/*.pdf
+highlighted/*.pdf

@@ -6,16 +6,18 @@
 Input  evidence/paper_XX.csv, one row per data point:
     Section    Overview / Indicators / Limitations & future research
     Field      e.g. "Club sample size", or the indicator name
+    Category   colour category from HIGHLIGHT_COLOURS.md (e.g. "Financial Capacity")
     Value      the value recorded in organised_extraction.xlsx
     Basis      Stated / Inferred / Not found
     Quote      exact words copied from the paper (blank for Not found)
     Location   where to look, e.g. "p.6, Sample" or "Table 2, p.8"
-    Reasoning  why the value follows from the quote (needed for Inferred/Not found)
+    Reasoning  why the value follows from the quote, citing the CODEBOOK.md rule
 
 Output
-    evidence/paper_XX.md                 evidence table, with the page each quote was found on
-    evidence/paper_XX_highlighted.pdf    every quote highlighted, with a comment naming the field
-                                         (yellow = Stated, blue = Inferred), plus a summary first page
+    evidence/paper_XX.md                    evidence table, with the page each quote was found on
+    highlighted/paper_XX_highlighted.pdf    every quote highlighted in its category colour
+                                            (plain = Stated, with wavy underline = Inferred),
+                                            a comment on each, and a summary/legend first page
 
 A quote that cannot be found in the PDF is NOT highlighted and is marked ✗ in
 the table, so misquotes and paraphrases are caught before anyone relies on them.
@@ -30,8 +32,24 @@ from pathlib import Path
 import pandas as pd
 import pymupdf
 
-COLOURS = {"stated": (1.0, 0.92, 0.23), "inferred": (0.55, 0.78, 1.0)}
-FIELDS = ["Section", "Field", "Value", "Basis", "Quote", "Location", "Reasoning"]
+ROOT = Path(__file__).resolve().parents[1]
+COLOUR_FILE = ROOT / "HIGHLIGHT_COLOURS.md"
+HIGHLIGHT_DIR = ROOT / "highlighted"
+INFERRED_UNDERLINE = (0.15, 0.15, 0.15)
+FIELDS = ["Section", "Field", "Category", "Value", "Basis", "Quote", "Location", "Reasoning"]
+
+
+def load_colours(path: Path = COLOUR_FILE) -> dict[str, tuple[float, float, float]]:
+    """Category -> RGB (0-1), read from the table in HIGHLIGHT_COLOURS.md."""
+    colours = {}
+    for line in path.read_text(encoding="utf-8").splitlines():
+        m = re.match(r"^\|\s*([^|]+?)\s*\|[^|]*\|\s*`?#([0-9A-Fa-f]{6})`?\s*\|", line)
+        if m:
+            h = m.group(2)
+            colours[m.group(1)] = tuple(int(h[i:i + 2], 16) / 255 for i in (0, 2, 4))
+    if not colours:
+        sys.exit(f"No colours found in {path}")
+    return colours
 
 
 def norm_token(t: str) -> str:
@@ -112,6 +130,11 @@ def main(pdf_path, csv_path):
     if missing:
         sys.exit(f"{csv_path} is missing columns: {missing}")
 
+    colours = load_colours()
+    unknown = sorted(set(ev["Category"]) - set(colours))
+    if unknown:
+        sys.exit(f"Unknown Category values {unknown}. Use one of: {list(colours)}")
+
     doc = pymupdf.open(pdf_path)
     if not any(p.get_text().strip() for p in doc):
         sys.exit("This PDF has no text layer (scanned image). Run OCR first, e.g. ocrmypdf.")
@@ -133,40 +156,66 @@ def main(pdf_path, csv_path):
         found_pages.append(label if label == str(pno + 1) else f"{label} (PDF p.{pno + 1})")
         checks.append("✓")
         page = doc[pno]                       # keep a reference: annots need a live page
-        annot = page.add_highlight_annot(merge_line_rects(rects))
-        annot.set_colors(stroke=COLOURS.get(basis.split()[0], COLOURS["stated"]))
-        annot.set_info(title=f"{r['Section']}: {r['Field']}",
-                       content=f"{r['Field']} = {r['Value']}\nBasis: {r['Basis']}"
-                               + (f"\nReasoning: {r['Reasoning']}" if r["Reasoning"] else ""))
+        lines = merge_line_rects(rects)
+        info = dict(title=f"{r['Category']} | {r['Field']}",
+                    content=f"{r['Field']} = {r['Value']}\nBasis: {r['Basis']}"
+                            + (f"\nReasoning: {r['Reasoning']}" if r["Reasoning"] else ""))
+        annot = page.add_highlight_annot(lines)
+        annot.set_colors(stroke=colours[r["Category"]])
+        annot.set_info(**info)
         annot.update()
+        if basis.startswith("inferred"):
+            sq = page.add_squiggly_annot(lines)
+            sq.set_colors(stroke=INFERRED_UNDERLINE)
+            sq.set_info(**info)
+            sq.update()
 
     ev["Found on page"] = found_pages
     ev["Quote check"] = checks
 
-    # Summary page at the front of the highlighted PDF
+    # Summary + legend page at the front of the highlighted PDF
     summary = doc.new_page(0)
-    lines = [f"Evidence summary: {pdf_path.name}", "",
-             "Yellow = stated in the paper. Blue = inferred (see the comment for the reasoning).", ""]
+    y = 40
+    summary.insert_text((40, y), f"Evidence summary: {pdf_path.name}", fontsize=12)
+    y += 18
+    summary.insert_text((40, y), "Colour = category (see legend). Plain highlight = Stated; "
+                                 "wavy underline = Inferred. Click a highlight for the reasoning.", fontsize=7.5)
+    y += 14
+    used = [c for c in colours if c in set(ev["Category"])]
+    for k, cat in enumerate(used):          # legend, two columns
+        x = 40 + (k % 2) * 260
+        yy = y + (k // 2) * 12
+        summary.draw_rect(pymupdf.Rect(x, yy - 7, x + 18, yy + 2), color=None, fill=colours[cat])
+        summary.insert_text((x + 24, yy), cat, fontsize=7.5)
+    y += ((len(used) + 1) // 2) * 12 + 12
     for _, r in ev.iterrows():
-        where = f"p.{r['Found on page']}" if r["Found on page"] else ("not found in PDF" if r["Quote check"].startswith("✗") else r["Basis"])
-        lines.append(f"[{r['Section']}] {r['Field']}: {r['Value'][:60]}  ->  {where}")
-    summary.insert_textbox(pymupdf.Rect(40, 40, 555, 800), "\n".join(lines), fontsize=8)
-    out_pdf = csv_path.with_name(csv_path.stem + "_highlighted.pdf")
+        if y > 810:
+            summary = doc.new_page(summary.number + 1)
+            y = 40
+        where = (f"p.{r['Found on page']}" if r["Found on page"]
+                 else "QUOTE NOT FOUND" if r["Quote check"].startswith("✗") else r["Basis"])
+        summary.draw_rect(pymupdf.Rect(40, y - 7, 52, y + 2), color=None, fill=colours[r["Category"]])
+        mark = " (inferred)" if r["Basis"].lower().startswith("inferred") else ""
+        summary.insert_text((58, y), f"{r['Field']}: {str(r['Value'])[:70]}{mark}  ->  {where}", fontsize=7.5)
+        y += 11
+    HIGHLIGHT_DIR.mkdir(exist_ok=True)
+    out_pdf = HIGHLIGHT_DIR / (csv_path.stem + "_highlighted.pdf")
     doc.save(out_pdf, garbage=3, deflate=True)
 
     # Markdown evidence table
     def cell(s):
         return str(s).replace("|", "\\|").replace("\n", " ")
     md = [f"# Evidence: {pdf_path.name}", "",
-          f"Highlighted copy: `{out_pdf.name}` (first page lists every field). "
+          f"Highlighted copy: `highlighted/{out_pdf.name}` (first page lists every field). "
+          "Colours: see HIGHLIGHT_COLOURS.md. Rules: see CODEBOOK.md. "
           "Quote check: ✓ found and highlighted, ✗ not found in the PDF (fix before use), – no quote.", ""]
     for section, grp in ev.groupby("Section", sort=False):
         md += [f"## {section}", "",
-               "| Field | Value | Basis | Quote from paper | Location | Found on page | Check | Reasoning |",
-               "|---|---|---|---|---|---|---|---|"]
+               "| Field | Category | Value | Basis | Quote from paper | Location | Found on page | Check | Reasoning |",
+               "|---|---|---|---|---|---|---|---|---|"]
         for _, r in grp.iterrows():
             q = f"“{cell(r['Quote'])}”" if r["Quote"] else ""
-            md.append(f"| {cell(r['Field'])} | {cell(r['Value'])} | {cell(r['Basis'])} | {q} | "
+            md.append(f"| {cell(r['Field'])} | {cell(r['Category'])} | {cell(r['Value'])} | {cell(r['Basis'])} | {q} | "
                       f"{cell(r['Location'])} | {cell(r['Found on page'])} | {r['Quote check']} | {cell(r['Reasoning'])} |")
         md.append("")
     out_md = csv_path.with_suffix(".md")

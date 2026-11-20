@@ -99,11 +99,13 @@ them as approximate.
   culture, paid staff, club size, facility availability or ownership, strategic
   plans, revenues and financial problems, breaking even, volunteer ratio, and
   cooperation with other organisations.
-- **Culture is a de facto sixth dimension.** At least 8 quantitative papers
-  measure organisational culture ("sport for all" orientation, tradition,
-  conviviality) even though it is not one of Hall et al.'s (2003) five
-  dimensions. Some group it under infrastructure; others treat it separately
-  (papers 6, 8, 14 and 18 have a "cultural capacity" block).
+- **Culture is widely measured but inconsistently placed.** At least 8
+  quantitative papers measure organisational culture ("sport for all"
+  orientation, tradition, conviviality). Hall et al. (2003) place culture inside
+  **Infrastructure and Process Capacity** ("processes and culture"), but papers 6,
+  8, 14 and 18 treat it as a separate "cultural capacity" block. Under the codebook
+  (CODEBOOK.md §1.1), these variables belong to Infrastructure and Process, which
+  would make that dimension even more heavily measured.
 - **How capacity was measured (310 capacity variables)**: binary/dummy 28%,
   Likert or rating items 23%, ratios/percentages/shares 17%, categorical bands 6%,
   counts/amounts 6%, composite indices 1%. 17% have no measurement detail recorded.
@@ -185,8 +187,8 @@ better measures, which is exactly what the evidence base lacks.
 5. **Beyond Germany and Canada**, and beyond a single board respondent per club.
 6. **Linking the qualitative and quantitative evidence**, which currently come
    from different countries and frameworks.
-7. **Organisational culture**, which is widely measured but sits outside the
-   five-dimension framework.
+7. **Organisational culture**, which is widely measured, but often outside the
+   Infrastructure and Process dimension where Hall et al. (2003) place it.
 
 ## Data notes to check before write-up
 
