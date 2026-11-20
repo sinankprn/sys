@@ -174,7 +174,20 @@ IND_FIELDS = ["Tag", "Indicator", "Role", "Suggested role", "Dimension", "Sugges
               "Status", "Basis", "Quote", "Location", "Reasoning"]
 IND_ATTRS = [("Role", "I3"), ("Dimension", "I4"), ("Definition", "I6"), ("Measure type", "I7")]
 AMBER, RED = "FCE5B0", "F4C7C3"
-ROLES = ["Outcome (DV)", "Predictor (IV)", "Control", "Grouping variable", "Compared variable", "Measured only"]
+ROLES = ["Outcome (DV)", "Predictor (IV)", "Control", "Measured only"]   # CODEBOOK.md I3, in this order
+
+
+def role_problems(value: str) -> str:
+    """'' if the value is valid: allowed roles, separated by '; ', in ROLES order, no repeats."""
+    if value in ("", "?"):
+        return ""
+    parts = [p.strip() for p in value.split(";")]
+    if any(p not in ROLES for p in parts):
+        return f"'{value}' has a role outside {ROLES}"
+    order = [ROLES.index(p) for p in parts]
+    if order != sorted(set(order)):
+        return f"'{value}' must list roles once each, in the order {ROLES}"
+    return ""
 
 
 def shown(current, suggested):
@@ -295,9 +308,9 @@ def main(pdf_path, csv_path):
     missing = [c for c in IND_FIELDS if c not in ind.columns]
     if missing:
         sys.exit(f"{ind_path} is missing columns: {missing}")
-    bad_roles = sorted({v for v in list(ind["Role"]) + list(ind["Suggested role"]) if v not in ROLES + ["", "?"]})
+    bad_roles = sorted({role_problems(v) for v in list(ind["Role"]) + list(ind["Suggested role"])} - {""})
     if bad_roles:
-        sys.exit(f"Roles not allowed by CODEBOOK.md I3: {bad_roles}. Use one of: {ROLES}")
+        sys.exit("Role values break CODEBOOK.md I3: " + "; ".join(bad_roles))
     items = pd.concat([ev, indicator_items(ind, colours)], ignore_index=True)
     if items["Tag"].duplicated().any():
         sys.exit(f"Duplicate tags: {sorted(items.loc[items['Tag'].duplicated(), 'Tag'])}")

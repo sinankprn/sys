@@ -10,10 +10,12 @@ them as approximate.
 
 ## Headline insights
 
-1. **Capacity is studied as a cause, almost never as an effect.** 245 of the 310
-   capacity variables are predictors. Only one paper (17, Rossi et al., 2023)
-   models capacity dimensions directly as outcomes. The field asks what capacity
-   does for clubs far more than what builds capacity.
+1. **Capacity is mostly studied as a cause, rarely as an effect.** 245 of the 310
+   capacity variables are predictors. Capacity is an outcome in only four papers.
+   Three of them only compare groups or time points (papers 2, 7 and 26: ANOVA,
+   t-tests, Mann-Whitney), and just one models what drives capacity (paper 17,
+   Rossi et al., 2023, panel regression). The field asks what capacity does for clubs
+   far more than what builds capacity.
 2. **The evidence base is heavily German and quantitative.** 17 of 30 papers
    include Germany, and all 12 single-country German papers are quantitative
    surveys. A single research group (Breuer) is a co-author on 13 papers *(archive)*.
@@ -109,8 +111,9 @@ them as approximate.
 - **How capacity was measured (310 capacity variables)**: binary/dummy 28%,
   Likert or rating items 23%, ratios/percentages/shares 17%, categorical bands 6%,
   counts/amounts 6%, composite indices 1%. 17% have no measurement detail recorded.
-- **Capacity's role in the analysis**: predictor 245, compared across groups 52,
-  outcome 8, associated (correlation only) 5. See headline 1.
+- **Capacity's role in the analysis** (a variable can have several roles, one per
+  analysis): predictor 245, outcome 60 (papers 2, 7, 17, 26), measured only 5.
+  See headline 1.
 
 **Critical elements (Doherty et al., 2014)**
 
