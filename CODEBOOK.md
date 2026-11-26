@@ -3,9 +3,13 @@
 What every column in `organised_extraction.xlsx` means, the values it can take, and
 the rule for deciding a value.
 
+**Sheets.** Quantitative and mixed-methods papers: *Overview (quantitative)*, *Indicators
+(quantitative)*, *Limitations (quantitative)*. Qualitative papers: *Overview (qualitative)*,
+*Limitations (qualitative)*. Papers keep the same ID (O1) wherever they appear. The change
+log and verification record are kept separately in `sinanverification/verification_log.xlsx`.
+
 **Column codes.** Every column header in the spreadsheet starts with a code:
-**O** = Overview tab, **I** = Indicators (quantitative) tab, **L** = Limitations &
-future research tab. For example, `O15 HR` is column 15 of the Overview. The same
+**O** = Overview sheets, **I** = Indicators (quantitative), **L** = Limitations sheets. For example, `O15 HR` is column 15 of the Overview. The same
 code is used here, in each paper's checklist, and on the tag beside each highlight
 in the PDFs.
 
@@ -110,9 +114,9 @@ the introduction or literature review is FALSE.
 | Code | Column | Values | Rule |
 |---|---|---|---|
 | O1 | ID | 1–30 | Fixed paper number. Never reused. |
-| O2 | Reference | `Surname & Surname (Year)` or `Surname et al. (Year)` | Full surnames as printed, including compound ones (e.g. *Alonso Restrepo*). The year must equal O4. |
+| O2 | Reference | `Surname (Year)`, `Surname & Surname (Year)` or `Surname et al. (Year)` | Surnames from the Crossref author list, including compound ones (e.g. *Alonso Restrepo*). The year must equal O4. Same authors and year → add a, b by title order (e.g. Swierzy et al. 2018a, 2018b). |
 | O3 | DOI | `https://doi.org/…` | As printed on the paper. |
-| O4 | Year | yyyy | **Print issue year.** If the paper appeared online first in an earlier year, note that in the evidence. |
+| O4 | Year | yyyy | **Print issue year**, from the Crossref record of the DOI (journal-issue print date). Online-only journals (e.g. *Sustainability*): the online year. When Crossref's 'print' date is really the online date (e.g. Emerald), use the volume/issue year printed on the article. |
 | O5 | Journal | Full journal title | As on the journal's website. |
 | O6 | Countries | Country names separated by `; ` | Every country where data were collected. England, Scotland and Wales are listed separately when the paper does. |
 | O7 | Multi-sport | Yes / No | **Yes** if the sample covers more than one sport (including two named sports). **No** for a single sport. |
@@ -235,4 +239,6 @@ it finds exactly, so a paraphrase is flagged ✗. Colours are in
 | 2026-11-20 | I4 | Outcome constructs (need for change, sport light, membership growth) = Outputs and outcomes. Structural traits (size, type, age, time) = Not capacity; club age removed from the Historical factors examples | Paper 3 checklist (I-V1–3, I-V14–17) |
 | 2026-11-20 | O21 | Partly requires critical elements to be used in the analysis; citing Doherty et al. (2014) to justify a variable is not enough | Paper 3 checklist (O21a–b) |
 | 2026-11-20 | O14 | Interview and focus-group participants are always counted, even at one per club; blank only for surveys with one representative per club | Paper 5 checklist (O14) |
+| 2026-11-26 | O2–O5 | All 30 DOIs checked on Crossref. DOIs and titles all correct; 12 years corrected to the print issue year, references updated, paper 6's full journal title, Swierzy et al. 2018a/b | User request |
+| 2026-11-26 | Sheets | Overview and Limitations split into quantitative (incl. mixed methods, paper 7) and qualitative sheets; Change log and Verification moved to sinanverification/verification_log.xlsx | User request |
 | 2026-11-20 | L3 | A gap described as needing attention counts as a future-research suggestion, even when it is also a limitation | Paper 1 checklist (L5-FR2) |

@@ -1,6 +1,7 @@
 # Findings and insights: organisational capacity in community sport clubs
 
-> Figures reflect verification decisions up to paper 4 (e.g. paper 2's *ambition* scales
+> Years are print-issue years checked against Crossref (all 30 DOIs). Figures reflect
+> verification decisions up to paper 5 (e.g. paper 2's *ambition* scales
 > are coded "Other", not capacity). They will shift as more papers are checked.
 
 Based on `organised_extraction.xlsx` (30 papers, 481 quantitative variables, 254
@@ -29,10 +30,10 @@ them as approximate.
    Only about 10 papers list cross-sectional design or causality as a limitation,
    while about 14 call for longitudinal work.
 5. **Doherty et al.'s (2014) critical elements are mostly used by the people who
-   proposed them.** Of the 23 papers published from 2014 onwards, 15 do not use
+   proposed them.** Of the 24 papers published from 2014 onwards, 16 do not use
    them. 4 of the 5 papers that fully use them have Doherty or Cuskelly as a co-author.
 6. **External influences have moved from margin to mainstream.** They were
-   examined in 3 of 14 papers up to 2018, but in 12 of 16 papers since 2019.
+   examined in 3 of 13 papers up to 2018, but in 11 of 17 papers since 2019.
    COVID-19, policy and the wider environment explain much of this rise.
 7. **Capacity is measured with simple indicators, not validated scales.** About
    half of the capacity variables are binary dummies (29%) or single
@@ -45,7 +46,7 @@ them as approximate.
 | | |
 |---|---|
 | Papers | 30, published 2006–2024 |
-| Since 2019 | 16 papers (53%), so the field has accelerated recently |
+| Since 2019 | 17 papers (57%), so the field has accelerated recently |
 | Journals | 18 different journals. *Journal of Sport Management* and *Sport Management Review* have 5 each, and *Voluntas* has 3 |
 | Countries | Germany 17, Canada 9, Belgium 4. 5 papers are multi-country |
 | Sport | 23 multi-sport samples. 19 papers do not name the sports. Football (soccer) is the most-named single sport (7 papers) |
@@ -72,8 +73,8 @@ them as approximate.
 | Survey: repeated waves (panel) | 3 |
 | Case studies | 5 |
 
-- **The field has shifted towards quantitative work.** Up to 2013, 4 of 7 papers
-  were qualitative. Since 2019, 13 of 16 have been quantitative.
+- **The field has shifted towards quantitative work.** Up to 2013, 4 of 6 papers
+  were qualitative. Since 2019, 14 of 17 have been quantitative (plus one mixed methods).
 - **Longitudinal evidence is thin.** Only papers 3, 7, 10, 17 and 26 follow clubs
   over time. Only two (3 and 17) use panel regression; paper 26 compares two
   waves with t-tests.
@@ -147,7 +148,7 @@ evidence.
 | Factor analysis | 2 |
 | Ordered logit, fractional logit, quantile regression, network analysis (QAP) | 1 each |
 
-- **Regression dominates.** Multilevel models appear from 2017 onwards, mainly
+- **Regression dominates.** Multilevel models appear from 2018 onwards, mainly
   for member-in-club data (papers 21–23) and cross-country data (paper 19).
 - **No study uses structural equation modelling or mediation analysis**, even
   though capacity is theorised as latent dimensions that work through one another.

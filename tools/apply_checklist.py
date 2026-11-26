@@ -11,8 +11,9 @@ For each checklist row:
   - verdict Disagree/No on a "Matches" row  -> printed for follow-up (the value may be wrong)
   - blank verdict  -> printed; the paper is not marked as checked
 
-Every applied or rejected suggestion is added to the "Change log" tab, and the paper
-gets a row in the "Verification" tab. Formatting in the workbook is preserved.
+Every applied or rejected suggestion is added to the "Change log" tab, and the paper gets a
+row in the "Verification" tab, both in sinanverification/verification_log.xlsx (kept out of
+the main workbook). Formatting in organised_extraction.xlsx is preserved.
 """
 from __future__ import annotations
 
@@ -26,7 +27,11 @@ import pandas as pd
 
 ROOT = Path(__file__).resolve().parents[1]
 WORKBOOK = ROOT / "organised_extraction.xlsx"
-SHEETS = {"O": "Overview", "I": "Indicators (quantitative)", "L": "Limitations & future research"}
+LOGBOOK = ROOT / "sinanverification" / "verification_log.xlsx"   # Change log + Verification live here
+OVERVIEW_SHEETS = ["Overview (quantitative)", "Overview (qualitative)"]
+IND_SHEET = "Indicators (quantitative)"
+LIM_SHEET = {"Overview (quantitative)": "Limitations (quantitative)",
+             "Overview (qualitative)": "Limitations (qualitative)"}
 LOG_HEADERS = ["Date", "Paper ID", "Reference", "Tag", "Sheet", "Column", "Item",
                "Old value", "New value", "Decision", "Reviewer note", "Evidence page"]
 VER_HEADERS = ["Paper ID", "Reference", "Date checked", "Items checked", "Agreed",
@@ -80,12 +85,23 @@ def main(checklist_path):
     ind_ck = ind_ck.assign(v=ind_ck["Your verdict"].map(verdict))
 
     wb = openpyxl.load_workbook(WORKBOOK)
-    ov = wb["Overview"]
-    id_col = header_index(ov, "O1")
+    ov = row = None
+    for name in OVERVIEW_SHEETS:                   # the paper is on the quantitative or qualitative sheet
+        ws_ = wb[name]
+        hit = [r for r in range(2, ws_.max_row + 1) if str(ws_.cell(r, header_index(ws_, "O1")).value) == str(pid)]
+        if hit:
+            ov, row = ws_, hit[0]
+            break
+    if ov is None:
+        sys.exit(f"Paper {pid} not found on {OVERVIEW_SHEETS}")
+    lim_name = LIM_SHEET[ov.title]
+    SHEETS = {"O": ov.title, "I": IND_SHEET, "L": lim_name}
     ref_col = header_index(ov, "O2")
-    row = next(r for r in range(2, ov.max_row + 1) if str(ov.cell(r, id_col).value) == str(pid))
     reference_before = ov.cell(row, ref_col).value
-    log = get_or_create(wb, "Change log", LOG_HEADERS)
+    lb = openpyxl.load_workbook(LOGBOOK) if LOGBOOK.exists() else openpyxl.Workbook()
+    if "Sheet" in lb.sheetnames and lb["Sheet"].max_row == 1:
+        lb.remove(lb["Sheet"])
+    log = get_or_create(lb, "Change log", LOG_HEADERS)
     today = date.today().isoformat()
 
     accepted = rejected = 0
@@ -130,11 +146,11 @@ def main(checklist_path):
             if str(old) != str(new):
                 ov.cell(row, col).value = (new == "True") if new in ("True", "False") else new
             accepted += 1
-            log.append([today, pid, reference_before, tag, "Overview", ov.cell(1, col).value, r["Field"],
+            log.append([today, pid, reference_before, tag, ov.title, ov.cell(1, col).value, r["Field"],
                         old, new, "Changed", r["Your note"], r["Page"]])
         elif (mi := re.match(r"^(I\d+)-V(\d+)(?:-(\d+))?$", tag)):
             # Indicators: column I<n> for variable(s) V<a>[-<b>] of this paper (row order in the tab)
-            ws = wb["Indicators (quantitative)"]
+            ws = wb[IND_SHEET]
             col = header_index(ws, mi.group(1))
             rows = paper_rows(ws, pid)
             a, b = int(mi.group(2)), int(mi.group(3) or mi.group(2))
@@ -147,7 +163,7 @@ def main(checklist_path):
                             r["Your note"], r["Page"]])
             accepted += 1
         elif (ml := re.match(r"^L5-(Lim|FR)(\d+)(\+?)$", tag)):
-            ws = wb["Limitations & future research"]
+            ws = wb[lim_name]
             kind = "Limitation" if ml.group(1) == "Lim" else "Future research"
             n = int(ml.group(2))
             if ml.group(3) == "+":            # add a new point, directly under the paper's other rows
@@ -179,7 +195,7 @@ def main(checklist_path):
     if len(ind_ck):
         sug = pd.read_csv(ROOT / "evidence" / f"paper_{pid:02d}_indicators.csv", dtype=str).fillna("")
         sug = sug.set_index("Tag")
-        ws = wb["Indicators (quantitative)"]
+        ws = wb[IND_SHEET]
         prows = paper_rows(ws, pid)
         for _, r in ind_ck.iterrows():
             tag, v = r["Tag"], r["v"]
@@ -220,14 +236,14 @@ def main(checklist_path):
     # Keep the Reference column in the other tabs in step with O2
     new_ref = ov.cell(row, ref_col).value
     if new_ref != reference_before:
-        for title, code in [("Indicators (quantitative)", "I2"), ("Limitations & future research", "L2")]:
+        for title, code in [(IND_SHEET, "I2"), (lim_name, "L2")]:
             ws = wb[title]
             idc, rc = header_index(ws, title[0] + "1"), header_index(ws, code)
             for rr in range(2, ws.max_row + 1):
                 if str(ws.cell(rr, idc).value) == str(pid):
                     ws.cell(rr, rc).value = new_ref
 
-    ver = get_or_create(wb, "Verification", VER_HEADERS)
+    ver = get_or_create(lb, "Verification", VER_HEADERS)
     existing = [r for r in range(2, ver.max_row + 1) if str(ver.cell(r, 1).value) == str(pid)]
     open_items = "; ".join(follow_up)
     values = [pid, new_ref, today, len(ck) + len(ind_ck),
@@ -239,6 +255,7 @@ def main(checklist_path):
     else:
         ver.append(values)
     wb.save(WORKBOOK)
+    lb.save(LOGBOOK)
 
     print(f"Paper {pid}: {accepted} suggestion(s) applied, {rejected} rejected and logged.")
     for f in follow_up:
