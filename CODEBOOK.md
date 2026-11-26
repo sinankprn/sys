@@ -3,8 +3,9 @@
 What every column in `organised_extraction.xlsx` means, the values it can take, and
 the rule for deciding a value.
 
-**Sheets.** Quantitative and mixed-methods papers: *Overview (quantitative)*, *Indicators
-(quantitative)*, *Limitations (quantitative)*. Qualitative papers: *Overview (qualitative)*,
+**Sheets.** Quantitative papers: *Overview (quantitative)*, *Indicators (quantitative)*,
+*Limitations (quantitative)*. Mixed-methods papers (paper 7): *Overview (mixed methods)*,
+*Indicators (mixed methods)*, *Limitations (mixed methods)*. Qualitative papers: *Overview (qualitative)*,
 *Limitations (qualitative)*. Papers keep the same ID (O1) wherever they appear. The change
 log and verification record are kept separately in `sinanverification/verification_log.xlsx`.
 
@@ -241,4 +242,5 @@ it finds exactly, so a paraphrase is flagged ✗. Colours are in
 | 2026-11-20 | O14 | Interview and focus-group participants are always counted, even at one per club; blank only for surveys with one representative per club | Paper 5 checklist (O14) |
 | 2026-11-26 | O2–O5 | All 30 DOIs checked on Crossref. DOIs and titles all correct; 12 years corrected to the print issue year, references updated, paper 6's full journal title, Swierzy et al. 2018a/b | User request |
 | 2026-11-26 | Sheets | Overview and Limitations split into quantitative (incl. mixed methods, paper 7) and qualitative sheets; Change log and Verification moved to sinanverification/verification_log.xlsx | User request |
+| 2026-11-26 | Sheets | Paper 7 (mixed methods) moved to its own Overview, Indicators and Limitations sheets | User request |
 | 2026-11-20 | L3 | A gap described as needing attention counts as a future-research suggestion, even when it is also a limitation | Paper 1 checklist (L5-FR2) |

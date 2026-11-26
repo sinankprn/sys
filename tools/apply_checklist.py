@@ -28,10 +28,8 @@ import pandas as pd
 ROOT = Path(__file__).resolve().parents[1]
 WORKBOOK = ROOT / "organised_extraction.xlsx"
 LOGBOOK = ROOT / "sinanverification" / "verification_log.xlsx"   # Change log + Verification live here
-OVERVIEW_SHEETS = ["Overview (quantitative)", "Overview (qualitative)"]
-IND_SHEET = "Indicators (quantitative)"
-LIM_SHEET = {"Overview (quantitative)": "Limitations (quantitative)",
-             "Overview (qualitative)": "Limitations (qualitative)"}
+GROUPS = ["quantitative", "qualitative", "mixed methods"]        # sheet suffixes
+OVERVIEW_SHEETS = [f"Overview ({g})" for g in GROUPS]
 LOG_HEADERS = ["Date", "Paper ID", "Reference", "Tag", "Sheet", "Column", "Item",
                "Old value", "New value", "Decision", "Reviewer note", "Evidence page"]
 VER_HEADERS = ["Paper ID", "Reference", "Date checked", "Items checked", "Agreed",
@@ -94,7 +92,9 @@ def main(checklist_path):
             break
     if ov is None:
         sys.exit(f"Paper {pid} not found on {OVERVIEW_SHEETS}")
-    lim_name = LIM_SHEET[ov.title]
+    group = ov.title[len("Overview ("):-1]
+    lim_name = f"Limitations ({group})"
+    IND_SHEET = f"Indicators ({group})"            # no indicators sheet for qualitative papers
     SHEETS = {"O": ov.title, "I": IND_SHEET, "L": lim_name}
     ref_col = header_index(ov, "O2")
     reference_before = ov.cell(row, ref_col).value
@@ -237,6 +237,8 @@ def main(checklist_path):
     new_ref = ov.cell(row, ref_col).value
     if new_ref != reference_before:
         for title, code in [(IND_SHEET, "I2"), (lim_name, "L2")]:
+            if title not in wb.sheetnames:
+                continue
             ws = wb[title]
             idc, rc = header_index(ws, title[0] + "1"), header_index(ws, code)
             for rr in range(2, ws.max_row + 1):
