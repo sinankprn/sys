@@ -230,6 +230,73 @@ it finds exactly, so a paraphrase is flagged ✗. Colours are in
 
 ---
 
+## 6. Effect sizes tab (one row per paper)
+
+E3 (Effect sizes) and E4 (P-values) are **written by `tools/effects.py`**, not typed by hand,
+so every paper uses the same layout. You enter the paper's results in
+`evidence/paper_XX_effects.csv` (blank copy: `tools/effects_template.csv`), one row per
+line of the cell, then run:
+
+```bash
+python tools/effects.py evidence/paper_XX_effects.csv --dry-run   # preview
+python tools/effects.py evidence/paper_XX_effects.csv             # write + log
+```
+
+### 6.1 What goes in
+
+| Include | Leave out |
+|---|---|
+| Every model in O22 (regression, multilevel, logit/probit, ANOVA, QAP) | Factor analysis (loadings are not effects on an outcome) |
+| **Every** coefficient in the final model, significant or not | Correlations, t-tests, Mann-Whitney, chi-square, descriptives (O23) |
+| Intercept, and fit statistics (R², adj. R², pseudo R², ICC, random-intercept variance) | Earlier steps of a hierarchical model, unless the authors interpret them |
+| Each column of the results table as its own model (or contrast, for multinomial models) | |
+
+A paper with no statistical model gets the single line `No statistical models` in both cells.
+
+### 6.2 Table columns (`paper_XX_effects.csv`)
+
+| Column | Fill in | Example |
+|---|---|---|
+| Model | The model's number in the paper's order. First row of each model only | Model 1 |
+| Label | The paper's own name for it, if any | LMM1 |
+| Family | One value from the paper's O22 | Multilevel / mixed-effects |
+| Outcome | The dependent variable, as in I5 | Perceived need for change |
+| N | Sample size with unit | 1,007 clubs |
+| Effect type | What Estimate holds | b (SE) · β · OR [95% CI] · marginal effect · F; η² |
+| Location | Table and page | Table 3, p. 9 |
+| Contrast | Only for multinomial/ordinal outcomes: the comparison | Decrease vs increase |
+| Kind | `Fit`, `Intercept`, `Predictor` or `Control` (the role in I3) | Predictor |
+| Variable | **Exactly the I5 name** (the tool flags any that don't match) | Economic health |
+| Category | For dummies/categories: level and reference | unhealthy (ref = healthy) |
+| Estimate, SE, CI | As printed. Leave blank if not reported | 0.87 · 0.36 |
+| Estimate 2 label, Estimate 2 | A second effect size when the paper gives two | β · −0.197 |
+| Statistic | Test statistic as printed | t = 2.43 · z = 1.96 · F(1, 30) = 4.64 |
+| p | Exact p as printed (`p = .032`, `p < .001`), or the stars from the table (`*`, `**`, `***`). Blank = not significant | ** |
+
+Stars are converted with the paper's table note: the default is * p < .05, ** p < .01,
+*** p < .001. If a paper differs (e.g. paper 8: *** p < .01, ** p < .05, * p < .10), run
+with `--stars .10,.05,.01`.
+
+### 6.3 Layout the tool writes
+
+```
+MODEL 1 (LMM1; Multilevel / mixed-effects): Perceived need for change
+Effect size: estimate (SE) · N = 1,007 clubs
+Source: Table 3
+Random intercept variance: 0.215 (SE 0.032)
+Intercept: 3.85 (SE 0.13)
+Predictors
+1. Sport light: 0.05 (SE 0.02)
+2. Economic health – unhealthy (ref = healthy): -0.08 (SE 0.08)
+Controls
+3. Time: -0.03 (SE 0.03)
+```
+
+E4 has the same headings and numbering, with `t = 3.34, p < .01` or `n.s.` on each line.
+Line *n* of a model in E3 and line *n* in E4 are always the same coefficient.
+
+---
+
 ## Decisions log
 
 | Date | Rule | Decision | Prompted by |
@@ -253,6 +320,7 @@ it finds exactly, so a paraphrase is flagged ✗. Colours are in
 | 2026-11-26 | Sheets | Overview and Limitations split into quantitative (incl. mixed methods, paper 7) and qualitative sheets; Change log and Verification moved to sinanverification/verification_log.xlsx | User request |
 | 2026-11-26 | Sheets | Paper 7 (mixed methods) moved to its own Overview, Indicators and Limitations sheets | User request |
 | 2026-11-28 | O22, O23 | Model families split: O22 = statistical models only; O23 = other (non-model) analyses. 'ANOVA / t-test' split into ANOVA (model) and t-test (other). Papers 7, 9, 26 have no statistical model | User request |
+| 2026-11-28 | E3–E4 | Fixed template written by tools/effects.py from evidence/paper_XX_effects.csv; models only; every coefficient incl. non-significant (§6). Paper 3 rewritten from the full Table 3 | User request |
 | 2026-11-28 | E1–E4 | Effect sizes and p-values restored from the original extraction as 'Effect sizes' sheets (quantitative, mixed methods) | User request |
 | 2026-11-28 | I8 | Text column removed from both Indicators sheets | User's edit |
 | 2026-11-28 | I4 | 'Not capacity', 'Outputs and outcomes', 'Not grouped' and 'Other: …' merged into a single 'Other' (145 variables); 'Other: Cultural Capacity' mapped to Infrastructure and Process (17 variables, papers 6, 8, 14, 18) | User decision |
