@@ -14,7 +14,7 @@ them as approximate.
 
 ## Headline insights
 
-1. **Capacity is mostly studied as a cause, rarely as an effect.** 245 of the 302
+1. **Capacity is mostly studied as a cause, rarely as an effect.** 262 of the 319
    capacity variables are predictors. Capacity is an outcome in only four papers.
    Three of them only compare groups or time points (papers 2, 7 and 26: ANOVA,
    t-tests, Mann-Whitney), and just one models what drives capacity (paper 17,
@@ -115,9 +115,9 @@ them as approximate.
 - **How capacity was measured (302 capacity variables)**: binary/dummy 29%,
   Likert or rating items 21%, ratios/percentages/shares 18%, categorical bands 6%,
   counts/amounts 6%, composite indices 1%. 18% have no measurement detail recorded.
-- **Capacity's role in the analysis** (a variable can have several roles, one per
-  analysis): predictor 245, outcome 52 (papers 2, 7, 17, 26), measured only 36.
-  See headline 1.
+- **Capacity's role in the analysis** (roles come from models and group-comparison
+  tests; CODEBOOK.md §3.1): predictor 262, outcome 52 (papers 2, 7, 17, 26),
+  descriptive only 5. See headline 1.
 
 **Critical elements (Doherty et al., 2014)**
 

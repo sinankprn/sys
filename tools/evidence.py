@@ -174,25 +174,22 @@ IND_FIELDS = ["Tag", "Indicator", "Role", "Suggested role", "Dimension", "Sugges
               "Status", "Basis", "Quote", "Location", "Reasoning"]
 IND_ATTRS = [("Role", "I3"), ("Dimension", "I4"), ("Definition", "I6"), ("Measure type", "I7")]
 AMBER, RED = "FCE5B0", "F4C7C3"
-ROLES = ["Outcome (DV)", "Predictor (IV)", "Control", "Measured only"]   # CODEBOOK.md I3, in this order
+ROLES = ["Outcome (DV)", "Predictor (IV)", "Control", "Descriptive only"]   # CODEBOOK.md I3, in this order
 
 
 ROLE_DEFINITIONS = [   # keep in step with CODEBOOK.md section 3.1
-    ["Outcome (DV)", "The variable an analysis tries to explain, predict or compare: the result the authors are interested in.",
-     "Called dependent variable, outcome, explained variable. One model per outcome. In a group comparison "
-     "(ANOVA, t-test, chi-square, Mann-Whitney) it is the measure compared across the groups.",
+    ["Outcome (DV)", "The variable an analysis tries to explain, or the measure it compares across groups or time points.",
+     "Called dependent variable or outcome. In a group comparison (ANOVA, t-test, chi-square, Mann-Whitney) it is the measure compared.",
      "Paper 2: management capacity compared across club-size groups."],
-    ["Predictor (IV)", "A variable used to explain the outcome, whose effect the authors interpret.",
-     "Called independent variable, predictor, explanatory variable, determinant. Linked to a hypothesis. "
-     "In a group comparison it is the variable that defines the groups.",
-     "Paper 2: club size (the four size groups in the ANOVA)."],
+    ["Predictor (IV)", "A variable used to explain the outcome, or that defines the groups being compared, whose effect the authors interpret.",
+     "Called independent variable, predictor, determinant; linked to a hypothesis.",
+     "Paper 2: club size (the four ANOVA groups). Paper 7: programme participation."],
     ["Control", "Included only to adjust for differences between clubs or to match groups; its effect is not interpreted.",
-     "Called control variable or covariate; 'controlling for', 'to account for'. Often listed last in tables. "
-     "Includes matching variables.",
+     "Called control variable or covariate; 'controlling for'. Includes matching variables.",
      "Community size, region dummies, sport type, survey year."],
-    ["Measured only", "Measured and reported, but with no direction in the analysis.",
-     "Descriptive statistics, correlations, inputs to a factor analysis or scale development (EFA/CFA).",
-     "Paper 2: the 16 scales in the factor analysis and correlations."],
+    ["Descriptive only", "Reported but not used in any model or group-comparison test.",
+     "Appears only in descriptive tables, correlations or factor/scale analysis.",
+     "Paper 9: all variables. Paper 4: club age."],
 ]
 
 
@@ -459,8 +456,9 @@ def main(pdf_path, csv_path):
         for c in r_:
             c.alignment = Alignment(wrap_text=True, vertical="top")
     rd.append([])
-    rd.append(['Several roles: one per analysis, separated by "; " in this order: '
-               "Outcome (DV); Predictor (IV); Control; Measured only. Full rules: CODEBOOK.md section 3.1."])
+    rd.append(["Roles come from models and group-comparison tests; correlations, factor analysis and descriptives add no role. "
+               "Two roles only when a variable plays different roles in different models/tests (e.g. paper 3). "
+               "Full rules: CODEBOOK.md section 3.1."])
     simple_sheet(wb, "Overview", ev[ev["Section"] == "Overview"], colours)
     indicator_sheet(wb, ind, ev[ev["Section"] == "Indicators"], colours)
     simple_sheet(wb, "Limitations", ev[ev["Section"].str.startswith("Limitations")], colours)

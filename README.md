@@ -2,7 +2,7 @@
 
 | File | What it is |
 |---|---|
-| **`organised_extraction.xlsx`** | **Primary dataset.** Quantitative and mixed-methods sheets (Overview, Indicators, Limitations, Effect sizes each) and qualitative sheets (Overview, Limitations); papers keep the same ID throughout. Column headers carry codes (O1–O22, I1–I8, L1–L6) defined in `CODEBOOK.md` |
+| **`organised_extraction.xlsx`** | **Primary dataset.** Quantitative and mixed-methods sheets (Overview, Indicators, Limitations, Effect sizes each) and qualitative sheets (Overview, Limitations); papers keep the same ID throughout. Column headers carry codes (O1–O23, I1–I7, L1–L6) defined in `CODEBOOK.md` |
 | `FINDINGS.md` | Key findings, insights, research gaps, and data points to check |
 | `CODEBOOK.md` | What every column means, allowed values and decision rules, based on Hall et al.'s (2003) model. Paper checks cite these rules |
 | `HIGHLIGHT_COLOURS.md` | Colour for each category of evidence in the highlighted PDFs (the tool reads this file) |

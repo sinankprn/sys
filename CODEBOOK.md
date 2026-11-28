@@ -144,7 +144,7 @@ the introduction or literature review is FALSE.
 |---|---|---|---|
 | I1 | ID | Paper ID | |
 | I2 | Reference | As O2 | |
-| I3 | Role | Outcome (DV) · Predictor (IV) · Control · Measured only. Several roles separated by `; `, in that order | See [§3.1 Role definitions](#31-role-definitions-i3). |
+| I3 | Role | Outcome (DV) · Predictor (IV) · Control · Descriptive only. Two roles only as in §3.1 (e.g. `Outcome (DV); Predictor (IV)`) | See [§3.1 Role definitions](#31-role-definitions-i3). |
 | I4 | Dimension | Human Resources Capacity · Financial Capacity · Infrastructure and Process Capacity · Planning and Development Capacity · Relationship and Network Capacity · **External** · **Other** | **Capacity variables:** follow the authors' assignment to a Hall dimension (paper 3: urbanisation, labelled 'external relationships' → Relationship and Network). If the authors use a label outside Hall's five, map it by Hall's definitions (culture → Infrastructure and Process). **External:** environmental, resource-access or historical factors the authors treat as external. **Other:** everything that is not one of Hall's five capacities or External: outcomes and results (problem scores, fraud vulnerability, membership growth, need for change), the authors' own constructs (ambition, goals, institutional logics), and structural or design variables (club size, sport type, club age, country, survey wave). Variables still coded 'Other' in unchecked papers are reviewed when the paper is checked; some may turn out to be capacity. |
 | I5 | Indicator | Variable name as used in the paper | Keep the paper's name (including codes such as `PROB_FIN`). |
 | I6 | Definition | Text or blank | What the variable captures, in the paper's words where possible, without scale or statistics. Blank if the paper gives no definition. |
@@ -153,24 +153,30 @@ the introduction or literature review is FALSE.
 
 ### 3.1 Role definitions (I3)
 
-A variable gets **one role for each analysis it appears in**. When it appears in more
-than one analysis, list the roles separated by `; ` in this order: Outcome (DV);
-Predictor (IV); Control; Measured only. For example, `Outcome (DV); Measured only`.
-The evidence (Reasoning) records which analysis gave which role.
+**Rule.** A variable's role comes from any analysis that **explains an outcome or compares
+groups**: the statistical models in O22 (regression, multilevel, ANOVA, etc.) and the
+group-comparison tests in O23 (t-test, Mann-Whitney, Kruskal-Wallis, chi-square).
+Correlations, factor analysis and descriptive statistics **do not add a role**. A variable
+that appears in none of those analyses is **Descriptive only**.
 
 | Role | Definition | How to recognise it in a paper | Examples |
 |---|---|---|---|
-| **Outcome (DV)** | The variable an analysis tries to explain, predict or compare. It is the result the authors are interested in. | Called "dependent variable", "outcome", "explained variable" or "criterion". One model per outcome, usually named in the column or title of the results table. In a group comparison (ANOVA, t-test, chi-square, Mann-Whitney, Kruskal-Wallis), it is **the measure that is compared** across the groups. | Paper 2: management capacity compared across club-size groups. Paper 17: volunteers per member at time *t*. A club's "problem recruiting volunteers" in a regression. |
-| **Predictor (IV)** | A variable the authors use to explain the outcome, and whose effect they interpret. | Called "independent variable", "predictor", "explanatory variable" or "determinant". Linked to a hypothesis or research question, with its coefficient discussed. In a group comparison, it is **the variable that defines the groups**. | Paper 2: club size (four size groups in the ANOVA). Capacity variables such as paid staff or own facilities in a regression on club problems. |
-| **Control** | A variable included only to adjust for differences between clubs, or to match groups. Its effect is not the point of the study and is not interpreted. | Called "control variable", "covariate", or introduced with "controlling for" or "to account for". Often listed last in tables or summarised as "controls included". Also covers **matching variables** used to build comparable groups. | Community size, region or state dummies, sport type, survey year, club age when it is only adjusted for. Papers 7 and 27: variables used to match clubs. |
-| **Measured only** | A variable that is measured and reported but has no direction in the analysis: nothing is predicted from it or about it. | Descriptive statistics, correlations, and the inputs to a factor analysis or scale development (EFA, CFA). | Paper 2: the 16 capacity and ambition scales in the factor analysis and correlations. Paper 9: capacity items reported descriptively and correlated. |
+| **Outcome (DV)** | The variable an analysis tries to explain, or the measure it compares across groups or time points. | Called "dependent variable", "outcome", "explained variable". One model per outcome, usually named in the column or title of the results table. In a group comparison (ANOVA, t-test, chi-square, Mann-Whitney, Kruskal-Wallis) it is **the measure that is compared**. | Paper 2: management capacity compared across club-size groups (ANOVA). Paper 17: volunteers per member at time *t*. Paper 26: revenues compared between 2005 and 2007 (t-test). |
+| **Predictor (IV)** | A variable the authors use to explain the outcome, or that defines the groups being compared, and whose effect they interpret. | Called "independent variable", "predictor", "determinant". Linked to a hypothesis or research question, with its coefficient or group difference discussed. | Paper 2: club size (the four ANOVA groups). Paper 7: programme participation (participating vs non-participating clubs). |
+| **Control** | A variable included only to adjust for differences between clubs, or to match groups. Its effect is not interpreted. | Called "control variable", "covariate", "controlling for". Often listed last in tables. Includes **matching variables**. | Community size, region dummies, sport type, survey year. Paper 7: variables used to match clubs. |
+| **Descriptive only** | Reported in the paper (described, possibly correlated or used in a factor analysis) but **not used in any model or group-comparison test**. | Appears only in descriptive tables, correlation matrices or scale development. | Paper 9: all variables (descriptive statistics and correlations only). Paper 4: club age (only correlated with capacity). |
 
-**Deciding between Predictor and Control.** If the authors call a variable a control
-but test and interpret its effect, code it **Predictor (IV)**. Paper 2's club size is an
-example. If they only adjust for it, code it **Control**.
+**Two roles.** Only when the same variable plays different roles in different models or
+tests, separated by `; ` in the order Outcome (DV); Predictor (IV); Control. Example:
+paper 3, where need for change, sport light and organisational growth are each the outcome
+of one model and a predictor in the other two (`Outcome (DV); Predictor (IV)`).
 
-**When it can't be decided.** Leave the role as the best judgement and flag it as
-"Decision needed" in the paper's checklist. Don't create a new role.
+**Deciding between Predictor and Control.** If the authors call a variable a control but
+test and interpret its effect, code it **Predictor (IV)** (paper 2's club size). If they only
+adjust for it, code it **Control**.
+
+**When it can't be decided.** Keep the best judgement and flag it as "Decision needed" in
+the paper's checklist. Don't create a new role.
 
 ---
 
@@ -250,4 +256,5 @@ it finds exactly, so a paraphrase is flagged ✗. Colours are in
 | 2026-11-28 | E1–E4 | Effect sizes and p-values restored from the original extraction as 'Effect sizes' sheets (quantitative, mixed methods) | User request |
 | 2026-11-28 | I8 | Text column removed from both Indicators sheets | User's edit |
 | 2026-11-28 | I4 | 'Not capacity', 'Outputs and outcomes', 'Not grouped' and 'Other: …' merged into a single 'Other' (145 variables); 'Other: Cultural Capacity' mapped to Infrastructure and Process (17 variables, papers 6, 8, 14, 18) | User decision |
+| 2026-11-28 | I3 | Roles come from models and group-comparison tests only; correlations, factor analysis and descriptives add no role. 'Measured only' renamed 'Descriptive only' and used only when a variable has no other role. Add-on tags removed from papers 2 and 4 (44 variables); paper 9 and paper 4's club age = Descriptive only. Paper 3 keeps two roles | User decision |
 | 2026-11-20 | L3 | A gap described as needing attention counts as a future-research suggestion, even when it is also a limitation | Paper 1 checklist (L5-FR2) |
