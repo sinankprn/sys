@@ -31,7 +31,7 @@ organisational capacity in Hall et al. (2003). The model has three parts:
 |---|---|---|
 | **External influences** | Left | O20 External |
 | **Organisational capacities** | Middle | O15 HR, O16 Financial, O17 Infrastructure, O18 Planning, O19 Relationships |
-| **Outputs and outcomes** | Right | No Overview column. Used to classify outcome variables (I4) |
+| **Outputs and outcomes** | Right | No Overview column. Outcome variables are coded 'Other' in I4 |
 
 Hall et al. define capacity as an organisation's ability to fulfil its mission by
 drawing on three types of capital:
@@ -145,7 +145,7 @@ the introduction or literature review is FALSE.
 | I1 | ID | Paper ID | |
 | I2 | Reference | As O2 | |
 | I3 | Role | Outcome (DV) · Predictor (IV) · Control · Measured only. Several roles separated by `; `, in that order | See [§3.1 Role definitions](#31-role-definitions-i3). |
-| I4 | Dimension | Human Resources Capacity · Financial Capacity · Infrastructure and Process Capacity · Planning and Development Capacity · Relationship and Network Capacity · **External** · **Outputs and outcomes** · **Other** · **Not capacity** | **Capacity variables:** follow the authors' assignment to a Hall dimension (paper 3: urbanisation, labelled 'external relationships' → Relationship and Network). If the authors use a label outside Hall's five, map it by Hall's definitions (culture → Infrastructure and Process). **External:** environmental, resource-access or historical factors the authors treat as external. **Outputs and outcomes:** results the clubs produce or experience, including outcome constructs such as perceived need for change, service innovation (e.g. 'sport light') and membership growth (paper 3). **Other:** a construct the authors created that is not capacity, even if organised by Hall's dimensions (paper 2's *organisational ambition* scales). **Not capacity:** structural traits and design variables: club size, sport type (uni-/multi-sport), club age, survey wave or time. **(proposed)** The remaining `Other: …` and `Not grouped` labels are re-coded as each paper is checked. |
+| I4 | Dimension | Human Resources Capacity · Financial Capacity · Infrastructure and Process Capacity · Planning and Development Capacity · Relationship and Network Capacity · **External** · **Other** | **Capacity variables:** follow the authors' assignment to a Hall dimension (paper 3: urbanisation, labelled 'external relationships' → Relationship and Network). If the authors use a label outside Hall's five, map it by Hall's definitions (culture → Infrastructure and Process). **External:** environmental, resource-access or historical factors the authors treat as external. **Other:** everything that is not one of Hall's five capacities or External: outcomes and results (problem scores, fraud vulnerability, membership growth, need for change), the authors' own constructs (ambition, goals, institutional logics), and structural or design variables (club size, sport type, club age, country, survey wave). Variables still coded 'Other' in unchecked papers are reviewed when the paper is checked; some may turn out to be capacity. |
 | I5 | Indicator | Variable name as used in the paper | Keep the paper's name (including codes such as `PROB_FIN`). |
 | I6 | Definition | Text or blank | What the variable captures, in the paper's words where possible, without scale or statistics. Blank if the paper gives no definition. |
 | I7 | Measure type | Binary / dummy · Likert / rating scale · Ratio / percentage / share · Count / amount · Categorical / ordinal bands · Composite index / factor · Network ties · Not stated | How the variable is scored in the analysis. |
@@ -249,4 +249,5 @@ it finds exactly, so a paraphrase is flagged ✗. Colours are in
 | 2026-11-28 | O22, O23 | Model families split: O22 = statistical models only; O23 = other (non-model) analyses. 'ANOVA / t-test' split into ANOVA (model) and t-test (other). Papers 7, 9, 26 have no statistical model | User request |
 | 2026-11-28 | E1–E4 | Effect sizes and p-values restored from the original extraction as 'Effect sizes' sheets (quantitative, mixed methods) | User request |
 | 2026-11-28 | I8 | Text column removed from both Indicators sheets | User's edit |
+| 2026-11-28 | I4 | 'Not capacity', 'Outputs and outcomes', 'Not grouped' and 'Other: …' merged into a single 'Other' (145 variables); 'Other: Cultural Capacity' mapped to Infrastructure and Process (17 variables, papers 6, 8, 14, 18) | User decision |
 | 2026-11-20 | L3 | A gap described as needing attention counts as a future-research suggestion, even when it is also a limitation | Paper 1 checklist (L5-FR2) |

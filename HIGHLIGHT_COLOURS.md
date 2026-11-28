@@ -32,7 +32,7 @@ every field with its page.
 | Relationship and Network Capacity | blue | `#8CBFFF` | Relationships column, and relationship indicators or themes |
 | External | red | `#FF8C8C` | External column, and environmental, resource-access or historical factors (left of Hall's model) |
 | Outputs and outcomes | sand | `#E6CC99` | Outcome variables that are results of capacity (right of Hall's model) |
-| Other | teal grey | `#A9D8CC` | Constructs the authors created that are not Hall capacities (e.g. organisational ambition) |
+| Other | teal grey | `#A9D8CC` | Indicators coded 'Other' in I4: outcomes, authors' own constructs, structural/design variables |
 | Not capacity | silver | `#BFC7CC` | Controls such as club size, sport type, region dummies |
 | Limitations & future research | mauve | `#E0B0F0` | Limitations and future-research points |
 
