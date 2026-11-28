@@ -10,7 +10,9 @@ the rule for deciding a value.
 log and verification record are kept separately in `sinanverification/verification_log.xlsx`.
 
 **Column codes.** Every column header in the spreadsheet starts with a code:
-**O** = Overview sheets, **I** = Indicators (quantitative), **L** = Limitations sheets. For example, `O15 HR` is column 15 of the Overview. The same
+**O** = Overview sheets, **I** = Indicators sheets, **L** = Limitations sheets,
+**E** = Effect sizes sheets (E1 ID, E2 Reference, E3 Effect sizes, E4 P-values; quantitative and
+mixed-methods papers only; carried over from the original extraction and not yet verified). For example, `O15 HR` is column 15 of the Overview. The same
 code is used here, in each paper's checklist, and on the tag beside each highlight
 in the PDFs.
 
@@ -131,7 +133,8 @@ the introduction or literature review is FALSE.
 | O15–O19 | HR, Financial, Infrastructure, Planning, Relationships | TRUE / FALSE | See §1.1 and §1.5. |
 | O20 | External | TRUE / FALSE | See §1.2. |
 | O21 | Critical elements used | Yes / Partly / No | **Yes**: the analysis codes or measures data with Doherty et al.'s (2014) critical elements across the capacities. **Partly**: the analysis codes or measures some of the critical elements. **No**: the critical elements are not used in the analysis. Citing Doherty et al. (2014) to justify a variable is **not** enough for Partly (paper 3). |
-| O22 | Model families | Families separated by `; `, or blank | Statistical models used for the main analyses: Linear regression (OLS), Multilevel / mixed-effects, Logistic regression, Probit regression, Ordered logit, Fractional logit, Quantile regression, ANOVA / t-test, Non-parametric tests, Correlation / bivariate tests, Factor analysis (EFA/CFA), Social network analysis (QAP), Descriptive statistics. Blank for qualitative papers. |
+| O22 | Statistical models | Models separated by `; `, `None`, or `N/A` (qualitative) | **Statistical models only**: Linear regression (OLS), Multilevel / mixed-effects, Logistic regression, Probit regression, Ordered logit, Fractional logit, Quantile regression, Social network analysis (QAP), Factor analysis (EFA/CFA), ANOVA. `None` = quantitative paper with no model (papers 7, 9, 26). |
+| O23 | Other analyses | Analyses separated by `; `, or blank | Non-model analyses used to answer the research questions: Correlation / bivariate tests, t-test, Non-parametric tests (Mann-Whitney, Kruskal-Wallis, chi-square), Descriptive statistics (only when they are a main analysis), Thematic analysis (qualitative strand of a mixed-methods paper). Diagnostics (VIF, Cronbach's α) are not listed. |
 
 ---
 
@@ -243,4 +246,7 @@ it finds exactly, so a paraphrase is flagged ✗. Colours are in
 | 2026-11-26 | O2–O5 | All 30 DOIs checked on Crossref. DOIs and titles all correct; 12 years corrected to the print issue year, references updated, paper 6's full journal title, Swierzy et al. 2018a/b | User request |
 | 2026-11-26 | Sheets | Overview and Limitations split into quantitative (incl. mixed methods, paper 7) and qualitative sheets; Change log and Verification moved to sinanverification/verification_log.xlsx | User request |
 | 2026-11-26 | Sheets | Paper 7 (mixed methods) moved to its own Overview, Indicators and Limitations sheets | User request |
+| 2026-11-28 | O22, O23 | Model families split: O22 = statistical models only; O23 = other (non-model) analyses. 'ANOVA / t-test' split into ANOVA (model) and t-test (other). Papers 7, 9, 26 have no statistical model | User request |
+| 2026-11-28 | E1–E4 | Effect sizes and p-values restored from the original extraction as 'Effect sizes' sheets (quantitative, mixed methods) | User request |
+| 2026-11-28 | I8 | Text column removed from both Indicators sheets | User's edit |
 | 2026-11-20 | L3 | A gap described as needing attention counts as a future-research suggestion, even when it is also a limitation | Paper 1 checklist (L5-FR2) |
